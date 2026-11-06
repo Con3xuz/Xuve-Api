@@ -1,5 +1,5 @@
 """
-OMNI - Rutas de Gestión de Productos para Comercios
+Xuve - Rutas de Gestión de Productos para Comercios
 ===================================================
 Sistema robusto con:
 - CRUD completo de productos
@@ -526,7 +526,7 @@ async def get_import_template(user: dict = Depends(get_current_user)):
         io.BytesIO(output.getvalue().encode("utf-8-sig")),
         media_type="text/csv",
         headers={
-            "Content-Disposition": "attachment; filename=plantilla_productos_omni.csv"
+            "Content-Disposition": "attachment; filename=plantilla_productos_xuve.csv"
         },
     )
 

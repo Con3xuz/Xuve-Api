@@ -9,7 +9,7 @@ Este módulo implementa:
 
 Modelo de Negocio:
 - Fee fijo por transacción: configurable desde panel admin
-- Cliente paga tarifa → OMNI retiene fee → Línea recibe resto
+- Cliente paga tarifa → Xuve retiene fee → Línea recibe resto
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request
@@ -345,7 +345,7 @@ async def iniciar_recorrido(request: Request, user: dict = Depends(get_current_u
     # Datos del QR (lo que escaneará el cliente)
     qr_data = json.dumps(
         {
-            "type": "omni_pasaje",
+            "type": "xuve_pasaje",
             "recorrido_id": recorrido_id,
             "ruta_id": asignacion["ruta_id"],
             "ruta_codigo": asignacion["ruta_codigo"],
@@ -503,7 +503,7 @@ async def pagar_pasaje(request: Request, user: dict = Depends(get_current_user))
 
     Modelo de negocio:
     - Tarifa completa se cobra del cliente
-    - OMNI retiene fee fijo ($0.02)
+    - Xuve retiene fee fijo ($0.02)
     - Línea recibe el resto
     """
     body = await request.json()
@@ -518,7 +518,7 @@ async def pagar_pasaje(request: Request, user: dict = Depends(get_current_user))
     except:
         raise HTTPException(status_code=400, detail="QR inválido")
 
-    if qr_data.get("type") != "omni_pasaje":
+    if qr_data.get("type") != "xuve_pasaje":
         raise HTTPException(
             status_code=400, detail="Este QR no es válido para pagar pasajes"
         )
@@ -549,8 +549,8 @@ async def pagar_pasaje(request: Request, user: dict = Depends(get_current_user))
         )
 
     # Calcular distribución - obtener fee desde configuración admin
-    fee_omni = await get_urban_fee()
-    monto_linea = tarifa - fee_omni
+    fee_xuve = await get_urban_fee()
+    monto_linea = tarifa - fee_xuve
 
     # Descontar del cliente
     await db.users.update_one(
@@ -594,7 +594,7 @@ async def pagar_pasaje(request: Request, user: dict = Depends(get_current_user))
         "user_id": user["user_id"],
         "user_email": user.get("email"),
         "tarifa": tarifa,
-        "fee_omni": fee_omni,
+        "fee_xuve": fee_xuve,
         "monto_linea": monto_linea,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }

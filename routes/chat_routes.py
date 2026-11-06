@@ -1,5 +1,5 @@
 """
-Chat Routes - Sistema de mensajería operativa para OMNI SuperApp
+Chat Routes - Sistema de mensajería operativa para Xuve SuperApp
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request
@@ -56,7 +56,7 @@ async def create_conversation(request: Request, user: dict = Depends(get_current
         participants.append(target_user_id)
     elif conv_type == "support":
         # Agregar cuenta de soporte genérica
-        participants.append("support_omni")
+        participants.append("support_xuve")
 
     conversation = {
         "conversation_id": conversation_id,
@@ -149,7 +149,7 @@ async def send_message(
 
     # Crear notificación para otros participantes
     for participant_id in conv["participants"]:
-        if participant_id != user_id and participant_id != "support_omni":
+        if participant_id != user_id and participant_id != "support_xuve":
             await create_notification_internal(
                 participant_id,
                 "chat_message",

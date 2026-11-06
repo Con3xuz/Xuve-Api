@@ -1,5 +1,5 @@
 """
-Test suite for SuperApp OMNI - Transporte Interurbano vertical
+Test suite for SuperApp Xuve - Transporte Interurbano vertical
 Tests: Login, Wallet Guard, trip creation, ticket purchase, trip completion, commission system
 """
 
@@ -10,9 +10,9 @@ import os
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials
-SOCIO_EMAIL = "interurbano@omni.ve"
+SOCIO_EMAIL = "interurbano@xuve.ve"
 SOCIO_PASSWORD = "interurbano123"
-CLIENTE_EMAIL = "cliente@omni.ve"
+CLIENTE_EMAIL = "cliente@xuve.ve"
 CLIENTE_PASSWORD = "cliente123"
 
 

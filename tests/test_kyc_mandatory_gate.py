@@ -16,9 +16,9 @@ import uuid
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials
-TEST_NUEVO_USER = {"email": "nuevo@omni.ve", "password": "nuevo123"}
-TEST_CLIENTE = {"email": "cliente@omni.ve", "password": "cliente123"}
-TEST_MEDICO = {"email": "medico@omni.ve", "password": "medico123"}
+TEST_NUEVO_USER = {"email": "nuevo@xuve.ve", "password": "nuevo123"}
+TEST_CLIENTE = {"email": "cliente@xuve.ve", "password": "cliente123"}
+TEST_MEDICO = {"email": "medico@xuve.ve", "password": "medico123"}
 
 
 class TestKYCRolesInfo:
@@ -83,15 +83,15 @@ class TestUserLogin:
     """Test login flows for different user types"""
 
     def test_login_nuevo_user_without_kyc(self):
-        """Login nuevo@omni.ve - user without KYC should return user data"""
+        """Login nuevo@xuve.ve - user without KYC should return user data"""
         response = requests.post(f"{BASE_URL}/api/auth/login", json=TEST_NUEVO_USER)
 
         # User might not exist, which is fine - we're testing the flow
         if response.status_code == 401:
             print(
-                "INFO: nuevo@omni.ve user does not exist (expected for new user test)"
+                "INFO: nuevo@xuve.ve user does not exist (expected for new user test)"
             )
-            pytest.skip("nuevo@omni.ve user not found - may need to be created")
+            pytest.skip("nuevo@xuve.ve user not found - may need to be created")
 
         assert response.status_code == 200
         data = response.json()
@@ -106,18 +106,18 @@ class TestUserLogin:
 
         # Check KYC status - should be undefined/none/pending for new user
         kyc_status = user.get("kyc_status")
-        print(f"INFO: nuevo@omni.ve kyc_status: {kyc_status}")
+        print(f"INFO: nuevo@xuve.ve kyc_status: {kyc_status}")
 
         # For a new user without KYC, status should NOT be 'approved'
         assert (
             kyc_status != "approved"
         ), "New user without KYC should not have approved status"
-        print("PASS: nuevo@omni.ve login successful, KYC not approved")
+        print("PASS: nuevo@xuve.ve login successful, KYC not approved")
 
         return data["token"]
 
     def test_login_cliente_with_approved_kyc(self):
-        """Login cliente@omni.ve - user with approved KYC"""
+        """Login cliente@xuve.ve - user with approved KYC"""
         response = requests.post(f"{BASE_URL}/api/auth/login", json=TEST_CLIENTE)
         assert response.status_code == 200
 
@@ -131,18 +131,18 @@ class TestUserLogin:
         ), f"Expected role 'user', got '{user.get('role')}'"
 
         kyc_status = user.get("kyc_status")
-        print(f"INFO: cliente@omni.ve kyc_status: {kyc_status}")
+        print(f"INFO: cliente@xuve.ve kyc_status: {kyc_status}")
 
-        # cliente@omni.ve should have approved KYC
+        # cliente@xuve.ve should have approved KYC
         assert (
             kyc_status == "approved"
-        ), f"cliente@omni.ve should have approved KYC, got '{kyc_status}'"
-        print("PASS: cliente@omni.ve login successful with approved KYC")
+        ), f"cliente@xuve.ve should have approved KYC, got '{kyc_status}'"
+        print("PASS: cliente@xuve.ve login successful with approved KYC")
 
         return data["token"]
 
     def test_login_medico(self):
-        """Login medico@omni.ve - should return role 'medico'"""
+        """Login medico@xuve.ve - should return role 'medico'"""
         response = requests.post(f"{BASE_URL}/api/auth/login", json=TEST_MEDICO)
         assert response.status_code == 200
 
@@ -154,7 +154,7 @@ class TestUserLogin:
         assert (
             user.get("role") == "medico"
         ), f"Expected role 'medico', got '{user.get('role')}'"
-        print("PASS: medico@omni.ve login successful with role 'medico'")
+        print("PASS: medico@xuve.ve login successful with role 'medico'")
 
         return data["token"]
 
@@ -164,10 +164,10 @@ class TestKYCSubmit:
 
     @pytest.fixture
     def nuevo_token(self):
-        """Get token for nuevo@omni.ve user"""
+        """Get token for nuevo@xuve.ve user"""
         response = requests.post(f"{BASE_URL}/api/auth/login", json=TEST_NUEVO_USER)
         if response.status_code != 200:
-            pytest.skip("nuevo@omni.ve user not available")
+            pytest.skip("nuevo@xuve.ve user not available")
         return response.json()["token"]
 
     def test_kyc_submit_identity_data(self, nuevo_token):
@@ -209,13 +209,13 @@ class TestKYCStatus:
 
     @pytest.fixture
     def cliente_token(self):
-        """Get token for cliente@omni.ve user"""
+        """Get token for cliente@xuve.ve user"""
         response = requests.post(f"{BASE_URL}/api/auth/login", json=TEST_CLIENTE)
         assert response.status_code == 200
         return response.json()["token"]
 
     def test_kyc_my_status_approved_user(self, cliente_token):
-        """cliente@omni.ve should have approved KYC status"""
+        """cliente@xuve.ve should have approved KYC status"""
         headers = {"Authorization": f"Bearer {cliente_token}"}
 
         response = requests.get(f"{BASE_URL}/api/kyc/my-status", headers=headers)
@@ -227,7 +227,7 @@ class TestKYCStatus:
         # Check kyc_status field
         kyc_status = data.get("kyc_status")
         assert kyc_status == "approved", f"Expected 'approved', got '{kyc_status}'"
-        print("PASS: cliente@omni.ve has approved KYC status")
+        print("PASS: cliente@xuve.ve has approved KYC status")
 
 
 class TestPrescriptionAPIs:
@@ -235,14 +235,14 @@ class TestPrescriptionAPIs:
 
     @pytest.fixture
     def medico_token(self):
-        """Get token for medico@omni.ve"""
+        """Get token for medico@xuve.ve"""
         response = requests.post(f"{BASE_URL}/api/auth/login", json=TEST_MEDICO)
         assert response.status_code == 200
         return response.json()["token"]
 
     @pytest.fixture
     def cliente_token(self):
-        """Get token for cliente@omni.ve"""
+        """Get token for cliente@xuve.ve"""
         response = requests.post(f"{BASE_URL}/api/auth/login", json=TEST_CLIENTE)
         assert response.status_code == 200
         return response.json()["token"]
@@ -307,7 +307,7 @@ class TestRegisterNewUser:
         """POST /api/auth/register should create user with role 'user'"""
         unique_id = uuid.uuid4().hex[:8]
         test_user = {
-            "email": f"TEST_newuser_{unique_id}@omni.ve",
+            "email": f"TEST_newuser_{unique_id}@xuve.ve",
             "password": "testpass123",
             "name": f"TEST New User {unique_id}",
             "phone": f"+5841299{unique_id[:5]}",

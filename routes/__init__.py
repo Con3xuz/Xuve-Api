@@ -1,1 +1,1 @@
-# Routes module - All API endpoints for OMNI SuperApp
+# Routes module - All API endpoints for Xuve SuperApp

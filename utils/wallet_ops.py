@@ -5,13 +5,13 @@ Las verificaciones de saldo se hacen DENTRO del mismo UPDATE en PostgreSQL, no
 en Python, para evitar condiciones de carrera (dos peticiones concurrentes que
 ambas pasan el chequeo y dejan el saldo negativo / doble gasto).
 
-Operan directamente sobre la tabla `omni.users` (columna JSONB `doc`) usando el
+Operan directamente sobre la tabla `xuve.users` (columna JSONB `doc`) usando el
 pool de asyncpg. El "disponible" es siempre `wallet_balance - wallet_held`.
 """
 
 from db.pg import get_pool
 
-_USERS = "omni.users"
+_USERS = "xuve.users"
 
 # Expresiones JSONB reutilizables sobre la fila `doc`.
 _BAL = "COALESCE((doc ->> 'wallet_balance')::numeric, 0)"

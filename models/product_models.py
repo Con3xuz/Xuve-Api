@@ -1,5 +1,5 @@
 """
-OMNI - Modelos de Productos para Comercios
+Xuve - Modelos de Productos para Comercios
 ==========================================
 Sistema robusto de gestión de productos con:
 - Múltiples imágenes por producto

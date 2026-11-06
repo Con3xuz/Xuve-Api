@@ -1,5 +1,5 @@
 """
-OMNI - Rutas de Recetas Médicas
+Xuve - Rutas de Recetas Médicas
 ================================
 Endpoints para gestión de recetas digitales.
 Flujo: Médico crea receta → Se envía a Farmabien → Paciente aprueba y paga → Delivery

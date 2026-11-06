@@ -312,7 +312,7 @@ async def completar_servicio_carga(
     Marcar servicio de carga pesada como completado.
 
     CASH-TO-DRIVER: El cliente paga 100% al camionero al llegar.
-    OMNI descuenta 10% de comisión del balance del conductor.
+    Xuve descuenta 10% de comisión del balance del conductor.
     """
     cotizacion = await db.cotizaciones_carga.find_one(
         {"cotizacion_id": cotizacion_id}, {"_id": 0}

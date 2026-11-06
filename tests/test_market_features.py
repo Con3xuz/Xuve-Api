@@ -1,5 +1,5 @@
 """
-Test Market Features - OMNI SuperApp
+Test Market Features - Xuve SuperApp
 =====================================
 Tests for:
 - /api/market/products (NEW endpoint)
@@ -17,12 +17,12 @@ BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials
 TEST_CREDENTIALS = {
-    "cliente": {"email": "cliente@omni.ve", "password": "cliente123"},
-    "admin": {"email": "admin@omni.ve", "password": "admin123"},
-    "conductor": {"email": "conductor@omni.ve", "password": "conductor123"},
-    "repartidor": {"email": "repartidor@omni.ve", "password": "repartidor123"},
-    "comercial": {"email": "comercial@omni.ve", "password": "comercial123"},
-    "linea": {"email": "linea@omni.ve", "password": "linea123"},
+    "cliente": {"email": "cliente@xuve.ve", "password": "cliente123"},
+    "admin": {"email": "admin@xuve.ve", "password": "admin123"},
+    "conductor": {"email": "conductor@xuve.ve", "password": "conductor123"},
+    "repartidor": {"email": "repartidor@xuve.ve", "password": "repartidor123"},
+    "comercial": {"email": "comercial@xuve.ve", "password": "comercial123"},
+    "linea": {"email": "linea@xuve.ve", "password": "linea123"},
 }
 
 

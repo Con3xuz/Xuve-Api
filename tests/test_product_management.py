@@ -1,5 +1,5 @@
 """
-OMNI - Product Management System Tests
+Xuve - Product Management System Tests
 =======================================
 Tests for the product CRUD, CSV import, and image management endpoints.
 Used by comercial users (socio_comercial role) to manage their store products.
@@ -13,7 +13,7 @@ import io
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials for comercial user
-COMERCIAL_EMAIL = "comercial@omni.ve"
+COMERCIAL_EMAIL = "comercial@xuve.ve"
 COMERCIAL_PASSWORD = "comercial123"
 
 
@@ -342,7 +342,7 @@ class TestCSVImport:
         content_disposition = response.headers.get("content-disposition", "")
         assert "attachment" in content_disposition, "Should be attachment"
         assert (
-            "plantilla_productos_omni.csv" in content_disposition
+            "plantilla_productos_xuve.csv" in content_disposition
         ), "Should have correct filename"
 
         # Check CSV content

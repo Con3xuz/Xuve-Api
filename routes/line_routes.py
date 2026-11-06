@@ -9,7 +9,7 @@ Este módulo implementa la gestión de:
 - Rutas Urbanas (Micropagos QR) - Pendiente
 
 WALLET GUARD: La comisión configurada se cobra de la billetera de la LÍNEA,
-no del chofer individual. La Línea prepaga la garantía a OMNI.
+no del chofer individual. La Línea prepaga la garantía a Xuve.
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request
@@ -291,7 +291,7 @@ async def registrar_chofer(
     chofer_doc = {
         "chofer_id": chofer_id,
         "linea_id": linea["linea_id"],
-        "user_id": None,  # Se puede vincular después a una cuenta OMNI
+        "user_id": None,  # Se puede vincular después a una cuenta Xuve
         "nombre": data.nombre,
         "cedula": data.cedula,
         "telefono": data.telefono,

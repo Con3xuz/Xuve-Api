@@ -1,5 +1,5 @@
 """
-OMNI - Prescription System Tests
+Xuve - Prescription System Tests
 ================================
 Tests for the new medical prescription system:
 - Medico role login and dashboard
@@ -15,13 +15,13 @@ import os
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials from test_credentials.md
-MEDICO_EMAIL = "medico@omni.ve"
+MEDICO_EMAIL = "medico@xuve.ve"
 MEDICO_PASSWORD = "medico123"
-CLIENTE_EMAIL = "cliente@omni.ve"
+CLIENTE_EMAIL = "cliente@xuve.ve"
 CLIENTE_PASSWORD = "cliente123"
-FARMABIEN_EMAIL = "farmabien@omni.ve"
+FARMABIEN_EMAIL = "farmabien@xuve.ve"
 FARMABIEN_PASSWORD = "farmabien123"
-COMERCIAL_EMAIL = "comercial@omni.ve"
+COMERCIAL_EMAIL = "comercial@xuve.ve"
 COMERCIAL_PASSWORD = "comercial123"
 
 
@@ -29,7 +29,7 @@ class TestMedicoLogin:
     """Test medico role authentication"""
 
     def test_medico_login_returns_medico_role(self):
-        """Login as medico@omni.ve should return role 'medico'"""
+        """Login as medico@xuve.ve should return role 'medico'"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
             json={"email": MEDICO_EMAIL, "password": MEDICO_PASSWORD},
@@ -47,7 +47,7 @@ class TestMedicoLogin:
         print(f"✓ Medico login successful - role: {data['user']['role']}")
 
     def test_farmabien_login_returns_socio_comercial(self):
-        """Login as farmabien@omni.ve should return role 'socio_comercial'"""
+        """Login as farmabien@xuve.ve should return role 'socio_comercial'"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
             json={"email": FARMABIEN_EMAIL, "password": FARMABIEN_PASSWORD},

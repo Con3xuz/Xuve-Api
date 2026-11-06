@@ -1,5 +1,5 @@
 """
-KYC Models - Sistema de Verificación Modular para OMNI SuperApp
+KYC Models - Sistema de Verificación Modular para Xuve SuperApp
 
 Este módulo define los esquemas polimórficos de KYC para cada tipo de socio:
 - Conductor / Repartidor: Vehículos ligeros

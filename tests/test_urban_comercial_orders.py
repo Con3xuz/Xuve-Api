@@ -16,10 +16,10 @@ BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials from requirements
 CREDENTIALS = {
-    "cliente": {"email": "cliente@omni.ve", "password": "cliente123"},
-    "comercial": {"email": "comercial@omni.ve", "password": "comercial123"},
-    "chofer_urbano": {"email": "chofer.urbano@omni.ve", "password": "urbano123"},
-    "urban_line_admin": {"email": "linea.urbana@omni.ve", "password": "urbana123"},
+    "cliente": {"email": "cliente@xuve.ve", "password": "cliente123"},
+    "comercial": {"email": "comercial@xuve.ve", "password": "comercial123"},
+    "chofer_urbano": {"email": "chofer.urbano@xuve.ve", "password": "urbano123"},
+    "urban_line_admin": {"email": "linea.urbana@xuve.ve", "password": "urbana123"},
 }
 
 

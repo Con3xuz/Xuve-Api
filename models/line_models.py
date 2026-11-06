@@ -160,7 +160,7 @@ class ChoferLinea(BaseModel):
 
     chofer_id: str
     linea_id: str  # FK a LineaTransporte
-    user_id: Optional[str] = None  # Si tiene cuenta en OMNI (rol chofer_linea)
+    user_id: Optional[str] = None  # Si tiene cuenta en Xuve (rol chofer_linea)
 
     nombre: str
     cedula: str
@@ -341,7 +341,7 @@ class MicropagoQR(BaseModel):
     user_id: str  # Cliente que pagó
 
     monto: float
-    fee_omni: float  # Fee fijo de OMNI
+    fee_xuve: float  # Fee fijo de Xuve
     monto_linea: float  # Monto que recibe la línea
     metodo_pago: str  # "wallet", "qr_externo"
 

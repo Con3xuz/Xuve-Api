@@ -2,8 +2,8 @@
 Test Suite for Urban Line Admin, Chofer Urbano, and Comercial Categories
 =========================================================================
 Tests the new functionalities:
-1. Urban Line Admin (linea.urbana@omni.ve) - separate from line_admin
-2. Chofer Urbano (chofer.urbano@omni.ve) - urban bus driver
+1. Urban Line Admin (linea.urbana@xuve.ve) - separate from line_admin
+2. Chofer Urbano (chofer.urbano@xuve.ve) - urban bus driver
 3. Comercial Categories (14 categories with emoji/color)
 """
 
@@ -14,9 +14,9 @@ import os
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials
-URBAN_LINE_ADMIN = {"email": "linea.urbana@omni.ve", "password": "urbana123"}
-CHOFER_URBANO = {"email": "chofer.urbano@omni.ve", "password": "urbano123"}
-COMERCIAL = {"email": "comercial@omni.ve", "password": "comercial123"}
+URBAN_LINE_ADMIN = {"email": "linea.urbana@xuve.ve", "password": "urbana123"}
+CHOFER_URBANO = {"email": "chofer.urbano@xuve.ve", "password": "urbano123"}
+COMERCIAL = {"email": "comercial@xuve.ve", "password": "comercial123"}
 
 
 class TestComercialCategories:
@@ -77,7 +77,7 @@ class TestUrbanLineAdminLogin:
         assert "user" in data
         assert "token" in data
         assert data["user"]["role"] == "urban_line_admin"
-        assert data["user"]["email"] == "linea.urbana@omni.ve"
+        assert data["user"]["email"] == "linea.urbana@xuve.ve"
 
     def test_urban_line_admin_get_mi_linea(self):
         """Urban line admin can access /api/urban-linea/mi-linea"""
@@ -156,7 +156,7 @@ class TestChoferUrbanoLogin:
         assert "user" in data
         assert "token" in data
         assert data["user"]["role"] == "chofer_urbano"
-        assert data["user"]["email"] == "chofer.urbano@omni.ve"
+        assert data["user"]["email"] == "chofer.urbano@xuve.ve"
 
     def test_chofer_urbano_get_mi_asignacion(self):
         """Chofer urbano can access their assignment"""
@@ -226,7 +226,7 @@ class TestComercialLogin:
 
         data = response.json()
         assert data["user"]["role"] == "socio_comercial"
-        assert data["user"]["email"] == "comercial@omni.ve"
+        assert data["user"]["email"] == "comercial@xuve.ve"
 
     def test_comercial_profile_has_category(self):
         """Comercial profile includes category with emoji"""

@@ -1,5 +1,5 @@
 """
-Test Wallet, Profile, and History Features - OMNI SuperApp
+Test Wallet, Profile, and History Features - Xuve SuperApp
 ============================================================
 Tests for:
 - Wallet balance and exchange rates
@@ -27,7 +27,7 @@ def cliente_token(api_client):
     """Get cliente authentication token"""
     response = api_client.post(
         f"{BASE_URL}/api/auth/login",
-        json={"email": "cliente@omni.ve", "password": "cliente123"},
+        json={"email": "cliente@xuve.ve", "password": "cliente123"},
     )
     assert response.status_code == 200
     return response.json().get("token")

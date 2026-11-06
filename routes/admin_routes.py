@@ -73,11 +73,11 @@ async def get_admin_stats(user: dict = Depends(get_current_user)):
             {"$group": {"_id": None, "total": {"$sum": {"$abs": "$amount_usd"}}}},
         ]
     ).to_list(1)
-    ingresos_omni = fee_result[0]["total"] if fee_result else 0
+    ingresos_xuve = fee_result[0]["total"] if fee_result else 0
 
     # Micropagos urbanos
     micro_result = await db.micropagos_urbanos.aggregate(
-        [{"$group": {"_id": None, "total": {"$sum": "$fee_omni"}}}]
+        [{"$group": {"_id": None, "total": {"$sum": "$fee_xuve"}}}]
     ).to_list(1)
     ingresos_urbanos = micro_result[0]["total"] if micro_result else 0
 
@@ -92,7 +92,7 @@ async def get_admin_stats(user: dict = Depends(get_current_user)):
         "rutas_urbanas": rutas_urbanas,
         "viajes_programados": viajes_programados,
         "volumen_transaccionado": round(volumen_total, 2),
-        "ingresos_plataforma": round(ingresos_omni + ingresos_urbanos, 2),
+        "ingresos_plataforma": round(ingresos_xuve + ingresos_urbanos, 2),
     }
 
 

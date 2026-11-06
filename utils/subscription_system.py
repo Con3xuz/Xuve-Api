@@ -1,5 +1,5 @@
 """
-OMNI - Sistema de Suscripción Diaria para Socios
+Xuve - Sistema de Suscripción Diaria para Socios
 ================================================
 Nuevo modelo económico: $1 USD por día de trabajo.
 
@@ -194,7 +194,7 @@ async def activate_subscription(user_id: str, user_name: str = "Usuario") -> dic
             "user_id": user_id,
             "type": "subscription_fee",
             "amount": -daily_fee,
-            "description": f"Suscripción diaria OMNI - {today_start.strftime('%d/%m/%Y')}",
+            "description": f"Suscripción diaria Xuve - {today_start.strftime('%d/%m/%Y')}",
             "balance_after": new_balance,
             "created_at": now.isoformat(),
         }

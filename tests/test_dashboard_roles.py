@@ -1,5 +1,5 @@
 """
-Test Dashboard Role APIs - OMNI SuperApp
+Test Dashboard Role APIs - Xuve SuperApp
 =========================================
 Tests for:
 - ConductorDashboard: connect/disconnect for rides
@@ -16,11 +16,11 @@ import os
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 TEST_CREDENTIALS = {
-    "conductor": {"email": "conductor@omni.ve", "password": "conductor123"},
-    "repartidor": {"email": "repartidor@omni.ve", "password": "repartidor123"},
-    "comercial": {"email": "comercial@omni.ve", "password": "comercial123"},
-    "linea": {"email": "linea@omni.ve", "password": "linea123"},
-    "admin": {"email": "admin@omni.ve", "password": "admin123"},
+    "conductor": {"email": "conductor@xuve.ve", "password": "conductor123"},
+    "repartidor": {"email": "repartidor@xuve.ve", "password": "repartidor123"},
+    "comercial": {"email": "comercial@xuve.ve", "password": "comercial123"},
+    "linea": {"email": "linea@xuve.ve", "password": "linea123"},
+    "admin": {"email": "admin@xuve.ve", "password": "admin123"},
 }
 
 
@@ -51,7 +51,7 @@ class TestConductorDashboard:
         assert response.status_code == 200
         data = response.json()
         assert "token" in data
-        assert data["user"]["email"] == "conductor@omni.ve"
+        assert data["user"]["email"] == "conductor@xuve.ve"
         print(f"Conductor logged in: {data['user']['name']}")
 
     def test_get_conductor_status(self, api_client):

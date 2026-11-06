@@ -7,7 +7,7 @@ en un bucket S3 PRIVADO y se sirven con URLs prefirmadas temporales. Así:
   - NO quedan públicos (el bucket bloquea acceso público; se accede vía presigned).
 Sin `S3_BUCKET` (dev local), cae a disco local en LOCAL_DIR.
 
-Credenciales: en prod, el rol de instancia EC2 (OmniEC2Role); en local, el AWS CLI.
+Credenciales: en prod, el rol de instancia EC2 (XuveEC2Role); en local, el AWS CLI.
 """
 
 import os

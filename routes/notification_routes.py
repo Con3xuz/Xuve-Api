@@ -1,5 +1,5 @@
 """
-Notification Routes - Sistema de notificaciones para OMNI SuperApp
+Notification Routes - Sistema de notificaciones para Xuve SuperApp
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request

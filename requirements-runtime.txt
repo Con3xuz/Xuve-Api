@@ -1,4 +1,4 @@
-# Dependencias REALES de runtime del backend OMNI (set mínimo verificado).
+# Dependencias REALES de runtime del backend Xuve (set mínimo verificado).
 # Solo lo que el código importa de hecho -> imagen ligera y arranque rápido.
 # El requirements.txt completo se conserva como manifiesto de desarrollo.
 fastapi==0.115.6

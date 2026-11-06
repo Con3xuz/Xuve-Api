@@ -1,5 +1,5 @@
 """
-KYC and Chat API Tests for OMNI SuperApp
+KYC and Chat API Tests for Xuve SuperApp
 Tests:
 - Login flows (cliente, admin, pending_conductor)
 - KYC submission and status check
@@ -19,10 +19,10 @@ class TestAuthLoginFlows:
     """Authentication Tests - Login as different users"""
 
     def test_cliente_login(self):
-        """Test login as cliente@omni.ve"""
+        """Test login as cliente@xuve.ve"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "cliente@omni.ve", "password": "cliente123"},
+            json={"email": "cliente@xuve.ve", "password": "cliente123"},
         )
         assert response.status_code == 200, f"Login failed: {response.text}"
         data = response.json()
@@ -34,10 +34,10 @@ class TestAuthLoginFlows:
         return data
 
     def test_admin_login(self):
-        """Test login as admin@omni.ve"""
+        """Test login as admin@xuve.ve"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@omni.ve", "password": "admin123"},
+            json={"email": "admin@xuve.ve", "password": "admin123"},
         )
         assert response.status_code == 200, f"Login failed: {response.text}"
         data = response.json()
@@ -46,10 +46,10 @@ class TestAuthLoginFlows:
         return data
 
     def test_pending_conductor_login(self):
-        """Test login as nuevo.conductor@omni.ve (pending KYC)"""
+        """Test login as nuevo.conductor@xuve.ve (pending KYC)"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "nuevo.conductor@omni.ve", "password": "pending123"},
+            json={"email": "nuevo.conductor@xuve.ve", "password": "pending123"},
         )
         assert response.status_code == 200, f"Login failed: {response.text}"
         data = response.json()
@@ -67,7 +67,7 @@ class TestKYCRoutes:
         """Get cliente token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "cliente@omni.ve", "password": "cliente123"},
+            json={"email": "cliente@xuve.ve", "password": "cliente123"},
         )
         if response.status_code != 200:
             pytest.skip("Cliente login failed")
@@ -107,7 +107,7 @@ class TestChatRoutes:
         """Get cliente auth data"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "cliente@omni.ve", "password": "cliente123"},
+            json={"email": "cliente@xuve.ve", "password": "cliente123"},
         )
         if response.status_code != 200:
             pytest.skip("Cliente login failed")
@@ -208,7 +208,7 @@ class TestAdminKYCRoutes:
         """Get admin token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@omni.ve", "password": "admin123"},
+            json={"email": "admin@xuve.ve", "password": "admin123"},
         )
         if response.status_code != 200:
             pytest.skip("Admin login failed")
@@ -312,10 +312,10 @@ class TestNotificationRoutes:
 
     @pytest.fixture
     def pending_conductor_auth(self):
-        """Get pending conductor auth (nuevo.conductor@omni.ve)"""
+        """Get pending conductor auth (nuevo.conductor@xuve.ve)"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "nuevo.conductor@omni.ve", "password": "pending123"},
+            json={"email": "nuevo.conductor@xuve.ve", "password": "pending123"},
         )
         if response.status_code != 200:
             pytest.skip("Pending conductor login failed")

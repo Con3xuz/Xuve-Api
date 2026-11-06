@@ -1,5 +1,5 @@
 """
-Capa de acceso a datos de OMNI.
+Capa de acceso a datos de Xuve.
 
 Migrado de MongoDB (motor) a PostgreSQL (asyncpg) mediante la capa de
 compatibilidad `db.mongo_compat`. La interfaz pública (`db`, `get_db`,

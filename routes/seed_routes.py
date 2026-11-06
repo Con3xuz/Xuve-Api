@@ -160,13 +160,13 @@ async def seed_database():
 
     # Reset/Create admin user
     await db.users.update_one(
-        {"email": "admin@omni.ve"},
+        {"email": "admin@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_admin001",
-                "email": "admin@omni.ve",
+                "email": "admin@xuve.ve",
                 "password": hash_password("admin123"),
-                "name": "Admin OMNI",
+                "name": "Admin Xuve",
                 "phone": "+58412000000",
                 "role": "admin",
                 "wallet_balance": 1000.0,
@@ -179,7 +179,7 @@ async def seed_database():
 
     await db.drivers.delete_many({"user_id": "user_admin001"})
 
-    # Seed sample cars for OMNI RENT
+    # Seed sample cars for Xuve Rent
     await db.rent_cars.delete_many({})
     sample_cars = [
         {
@@ -241,7 +241,7 @@ async def seed_database():
     test_users = [
         {
             "user_id": "user_cliente001",
-            "email": "cliente@omni.ve",
+            "email": "cliente@xuve.ve",
             "password": hash_password("cliente123"),
             "name": "Cliente Demo",
             "phone": "+58412111111",
@@ -254,7 +254,7 @@ async def seed_database():
         },
         {
             "user_id": "user_conductor001",
-            "email": "conductor@omni.ve",
+            "email": "conductor@xuve.ve",
             "password": hash_password("conductor123"),
             "name": "Conductor Demo",
             "phone": "+58412222222",
@@ -268,7 +268,7 @@ async def seed_database():
         },
         {
             "user_id": "user_repartidor001",
-            "email": "repartidor@omni.ve",
+            "email": "repartidor@xuve.ve",
             "password": hash_password("repartidor123"),
             "name": "Repartidor Demo",
             "phone": "+58412333333",
@@ -282,7 +282,7 @@ async def seed_database():
         },
         {
             "user_id": "user_comercial001",
-            "email": "comercial@omni.ve",
+            "email": "comercial@xuve.ve",
             "password": hash_password("comercial123"),
             "name": "Comercial Demo",
             "phone": "+58412444444",
@@ -295,7 +295,7 @@ async def seed_database():
         },
         {
             "user_id": "user_farmabien001",
-            "email": "farmabien@omni.ve",
+            "email": "farmabien@xuve.ve",
             "password": hash_password("farmabien123"),
             "name": "Farmabien - Sede Principal",
             "phone": "+58412999999",
@@ -308,7 +308,7 @@ async def seed_database():
         },
         {
             "user_id": "user_rent001",
-            "email": "rent@omni.ve",
+            "email": "rent@xuve.ve",
             "password": hash_password("rent123"),
             "name": "Rent Owner Demo",
             "phone": "+58412555555",
@@ -321,7 +321,7 @@ async def seed_database():
         },
         {
             "user_id": "user_medico001",
-            "email": "medico@omni.ve",
+            "email": "medico@xuve.ve",
             "password": hash_password("medico123"),
             "name": "Dr. María González",
             "phone": "+58412888888",
@@ -460,11 +460,11 @@ async def seed_database():
 
     # Create Carga Pesada test user
     await db.users.update_one(
-        {"email": "carga@omni.ve"},
+        {"email": "carga@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_carga001",
-                "email": "carga@omni.ve",
+                "email": "carga@xuve.ve",
                 "password": hash_password("carga123"),
                 "name": "Camionero Demo",
                 "phone": "+58412666666",
@@ -513,11 +513,11 @@ async def seed_database():
 
     # Create Line Admin user (Administrador de Terminal)
     await db.users.update_one(
-        {"email": "linea@omni.ve"},
+        {"email": "linea@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_linea001",
-                "email": "linea@omni.ve",
+                "email": "linea@xuve.ve",
                 "password": hash_password("linea123"),
                 "name": "Admin Expresos Occidente",
                 "phone": "+58412777777",
@@ -534,11 +534,11 @@ async def seed_database():
 
     # Socio Transporte Interurbano (cuenta demo para pruebas de interurbano)
     await db.users.update_one(
-        {"email": "interurbano@omni.ve"},
+        {"email": "interurbano@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_interurbano001",
-                "email": "interurbano@omni.ve",
+                "email": "interurbano@xuve.ve",
                 "password": hash_password("interurbano123"),
                 "name": "Socio Interurbano Demo",
                 "phone": "+58412888888",
@@ -622,11 +622,11 @@ async def seed_database():
 
     # Create test user for chofer (chofer_linea role)
     await db.users.update_one(
-        {"email": "chofer@omni.ve"},
+        {"email": "chofer@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_chofer001",
-                "email": "chofer@omni.ve",
+                "email": "chofer@xuve.ve",
                 "password": hash_password("chofer123"),
                 "name": "Carlos Ramírez (Chofer)",
                 "phone": "+58414111222",
@@ -649,7 +649,7 @@ async def seed_database():
             "nombre": "Carlos Ramírez",
             "cedula": "V-12345678",
             "telefono": "+58414111222",
-            "email": "chofer@omni.ve",
+            "email": "chofer@xuve.ve",
             "cedula_url": "https://example.com/cedula1.jpg",
             "licencia_url": "https://example.com/licencia1.jpg",
             "licencia_categoria": "5ta",
@@ -836,11 +836,11 @@ async def seed_database():
 
     # Create Urban Line Admin user
     await db.users.update_one(
-        {"email": "linea.urbana@omni.ve"},
+        {"email": "linea.urbana@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_urbana001",
-                "email": "linea.urbana@omni.ve",
+                "email": "linea.urbana@xuve.ve",
                 "password": hash_password("urbana123"),
                 "name": "Admin Transporte San Benito",
                 "phone": "+58412999999",
@@ -911,11 +911,11 @@ async def seed_database():
 
     # Create Chofer Urbano user
     await db.users.update_one(
-        {"email": "chofer.urbano@omni.ve"},
+        {"email": "chofer.urbano@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_chofer_urb001",
-                "email": "chofer.urbano@omni.ve",
+                "email": "chofer.urbano@xuve.ve",
                 "password": hash_password("urbano123"),
                 "name": "Pedro Urbano",
                 "phone": "+58414888888",
@@ -940,7 +940,7 @@ async def seed_database():
             "nombre": "Pedro Urbano",
             "cedula": "V-22334455",
             "telefono": "+58414888888",
-            "email": "chofer.urbano@omni.ve",
+            "email": "chofer.urbano@xuve.ve",
             "cedula_url": "https://example.com/cedula.jpg",
             "licencia_url": "https://example.com/licencia.jpg",
             "licencia_categoria": "5ta",
@@ -1102,11 +1102,11 @@ async def seed_database():
     # Limpiar colección de solicitudes KYC
     await db.kyc_requests.delete_many({})
 
-    # 1. KYC CONDUCTOR (APROBADO) - conductor@omni.ve
+    # 1. KYC CONDUCTOR (APROBADO) - conductor@xuve.ve
     kyc_conductor = {
         "kyc_id": "kyc_conductor001",
         "user_id": "user_conductor001",
-        "user_email": "conductor@omni.ve",
+        "user_email": "conductor@xuve.ve",
         "user_name": "Conductor Demo",
         "user_phone": "+58412222222",
         "requested_role": "socio_conductor",
@@ -1139,17 +1139,17 @@ async def seed_database():
         },
         "submitted_at": "2026-02-15T10:00:00",
         "reviewed_at": "2026-02-16T14:30:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-02-16T14:30:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_conductor)
 
-    # 2. KYC REPARTIDOR (APROBADO) - repartidor@omni.ve
+    # 2. KYC REPARTIDOR (APROBADO) - repartidor@xuve.ve
     kyc_repartidor = {
         "kyc_id": "kyc_repartidor001",
         "user_id": "user_repartidor001",
-        "user_email": "repartidor@omni.ve",
+        "user_email": "repartidor@xuve.ve",
         "user_name": "Repartidor Demo",
         "user_phone": "+58412333333",
         "requested_role": "socio_repartidor",
@@ -1180,17 +1180,17 @@ async def seed_database():
         },
         "submitted_at": "2026-02-18T09:00:00",
         "reviewed_at": "2026-02-18T16:00:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-02-18T16:00:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_repartidor)
 
-    # 3. KYC CARGA PESADA (APROBADO) - carga@omni.ve
+    # 3. KYC CARGA PESADA (APROBADO) - carga@xuve.ve
     kyc_carga = {
         "kyc_id": "kyc_carga001",
         "user_id": "user_carga001",
-        "user_email": "carga@omni.ve",
+        "user_email": "carga@xuve.ve",
         "user_name": "Camionero Demo",
         "user_phone": "+58412666666",
         "requested_role": "carga_pesada",
@@ -1228,17 +1228,17 @@ async def seed_database():
         },
         "submitted_at": "2026-02-10T11:00:00",
         "reviewed_at": "2026-02-12T10:00:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-02-12T10:00:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_carga)
 
-    # 4. KYC CHOFER INTERURBANO (APROBADO) - chofer@omni.ve
+    # 4. KYC CHOFER INTERURBANO (APROBADO) - chofer@xuve.ve
     kyc_chofer_inter = {
         "kyc_id": "kyc_chofer001",
         "user_id": "user_chofer001",
-        "user_email": "chofer@omni.ve",
+        "user_email": "chofer@xuve.ve",
         "user_name": "Carlos Ramírez (Chofer)",
         "user_phone": "+58414111222",
         "requested_role": "chofer_linea",
@@ -1275,17 +1275,17 @@ async def seed_database():
         },
         "submitted_at": "2026-01-20T08:00:00",
         "reviewed_at": "2026-01-22T15:00:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-01-22T15:00:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_chofer_inter)
 
-    # 5. KYC CHOFER URBANO (APROBADO) - chofer.urbano@omni.ve
+    # 5. KYC CHOFER URBANO (APROBADO) - chofer.urbano@xuve.ve
     kyc_chofer_urbano = {
         "kyc_id": "kyc_chofer_urb001",
         "user_id": "user_chofer_urb001",
-        "user_email": "chofer.urbano@omni.ve",
+        "user_email": "chofer.urbano@xuve.ve",
         "user_name": "Pedro Urbano",
         "user_phone": "+58414888888",
         "requested_role": "chofer_urbano",
@@ -1322,17 +1322,17 @@ async def seed_database():
         },
         "submitted_at": "2026-02-01T07:30:00",
         "reviewed_at": "2026-02-03T09:00:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-02-03T09:00:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_chofer_urbano)
 
-    # 6. KYC TERMINAL ADMIN B2B (APROBADO) - linea@omni.ve
+    # 6. KYC TERMINAL ADMIN B2B (APROBADO) - linea@xuve.ve
     kyc_terminal = {
         "kyc_id": "kyc_terminal001",
         "user_id": "user_linea001",
-        "user_email": "linea@omni.ve",
+        "user_email": "linea@xuve.ve",
         "user_name": "Admin Expresos Occidente",
         "user_phone": "+58412777777",
         "requested_role": "line_admin",
@@ -1357,17 +1357,17 @@ async def seed_database():
         },
         "submitted_at": "2026-01-05T10:00:00",
         "reviewed_at": "2026-01-08T11:30:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-01-08T11:30:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_terminal)
 
-    # 7. KYC LÍNEA URBANA B2B (APROBADO) - linea.urbana@omni.ve
+    # 7. KYC LÍNEA URBANA B2B (APROBADO) - linea.urbana@xuve.ve
     kyc_linea_urbana = {
         "kyc_id": "kyc_urbana001",
         "user_id": "user_urbana001",
-        "user_email": "linea.urbana@omni.ve",
+        "user_email": "linea.urbana@xuve.ve",
         "user_name": "Admin Transporte San Benito",
         "user_phone": "+58412999999",
         "requested_role": "urban_line_admin",
@@ -1391,17 +1391,17 @@ async def seed_database():
         },
         "submitted_at": "2026-01-10T14:00:00",
         "reviewed_at": "2026-01-12T10:00:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-01-12T10:00:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_linea_urbana)
 
-    # 8. KYC COMERCIAL (APROBADO) - comercial@omni.ve
+    # 8. KYC COMERCIAL (APROBADO) - comercial@xuve.ve
     kyc_comercial = {
         "kyc_id": "kyc_comercial001",
         "user_id": "user_comercial001",
-        "user_email": "comercial@omni.ve",
+        "user_email": "comercial@xuve.ve",
         "user_name": "Comercial Demo",
         "user_phone": "+58412444444",
         "requested_role": "socio_comercial",
@@ -1425,17 +1425,17 @@ async def seed_database():
         },
         "submitted_at": "2026-02-05T12:00:00",
         "reviewed_at": "2026-02-06T14:00:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-02-06T14:00:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.kyc_requests.insert_one(kyc_comercial)
 
-    # 9. KYC RENT OWNER (APROBADO) - rent@omni.ve
+    # 9. KYC RENT OWNER (APROBADO) - rent@xuve.ve
     kyc_rent = {
         "kyc_id": "kyc_rent001",
         "user_id": "user_rent001",
-        "user_email": "rent@omni.ve",
+        "user_email": "rent@xuve.ve",
         "user_name": "Rent Owner Demo",
         "user_phone": "+58412555555",
         "requested_role": "rent_owner",
@@ -1467,7 +1467,7 @@ async def seed_database():
         },
         "submitted_at": "2026-02-20T09:30:00",
         "reviewed_at": "2026-02-22T11:00:00",
-        "reviewed_by": "admin@omni.ve",
+        "reviewed_by": "admin@xuve.ve",
         "approved_at": "2026-02-22T11:00:00",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -1477,11 +1477,11 @@ async def seed_database():
 
     # Usuario PENDING 1: Nuevo Conductor
     await db.users.update_one(
-        {"email": "nuevo.conductor@omni.ve"},
+        {"email": "nuevo.conductor@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_pending001",
-                "email": "nuevo.conductor@omni.ve",
+                "email": "nuevo.conductor@xuve.ve",
                 "password": hash_password("pending123"),
                 "name": "Juan Pérez (Pendiente)",
                 "phone": "+58414567890",
@@ -1500,7 +1500,7 @@ async def seed_database():
     kyc_pending_conductor = {
         "kyc_id": "kyc_pending001",
         "user_id": "user_pending001",
-        "user_email": "nuevo.conductor@omni.ve",
+        "user_email": "nuevo.conductor@xuve.ve",
         "user_name": "Juan Pérez (Pendiente)",
         "user_phone": "+58414567890",
         "requested_role": "socio_conductor",
@@ -1538,11 +1538,11 @@ async def seed_database():
 
     # Usuario PENDING 2: Nueva Línea Urbana B2B
     await db.users.update_one(
-        {"email": "nueva.linea@omni.ve"},
+        {"email": "nueva.linea@xuve.ve"},
         {
             "$set": {
                 "user_id": "user_pending002",
-                "email": "nueva.linea@omni.ve",
+                "email": "nueva.linea@xuve.ve",
                 "password": hash_password("pending123"),
                 "name": "Cooperativa Los Andes",
                 "phone": "+58424123456",
@@ -1561,7 +1561,7 @@ async def seed_database():
     kyc_pending_linea = {
         "kyc_id": "kyc_pending002",
         "user_id": "user_pending002",
-        "user_email": "nueva.linea@omni.ve",
+        "user_email": "nueva.linea@xuve.ve",
         "user_name": "Cooperativa Los Andes",
         "user_phone": "+58424123456",
         "requested_role": "urban_line_admin",
@@ -1591,18 +1591,18 @@ async def seed_database():
     return {
         "message": "Data seeded successfully",
         "test_accounts": {
-            "admin": "admin@omni.ve / admin123",
-            "cliente": "cliente@omni.ve / cliente123",
-            "conductor": "conductor@omni.ve / conductor123 (KYC APPROVED)",
-            "repartidor": "repartidor@omni.ve / repartidor123 (KYC APPROVED)",
-            "comercial": "comercial@omni.ve / comercial123 (KYC APPROVED)",
-            "rent_owner": "rent@omni.ve / rent123 (KYC APPROVED)",
-            "carga_pesada": "carga@omni.ve / carga123 (KYC APPROVED - Licencia 5ta)",
-            "line_admin": "linea@omni.ve / linea123 (KYC APPROVED - Terminal B2B)",
-            "chofer_linea": "chofer@omni.ve / chofer123 (KYC APPROVED - Licencia 5ta)",
-            "urban_line_admin": "linea.urbana@omni.ve / urbana123 (KYC APPROVED - Línea Urbana B2B)",
-            "chofer_urbano": "chofer.urbano@omni.ve / urbano123 (KYC APPROVED - Licencia 5ta)",
-            "pending_conductor": "nuevo.conductor@omni.ve / pending123 (KYC PENDING - Para pruebas)",
-            "pending_linea": "nueva.linea@omni.ve / pending123 (KYC PENDING - Para pruebas)",
+            "admin": "admin@xuve.ve / admin123",
+            "cliente": "cliente@xuve.ve / cliente123",
+            "conductor": "conductor@xuve.ve / conductor123 (KYC APPROVED)",
+            "repartidor": "repartidor@xuve.ve / repartidor123 (KYC APPROVED)",
+            "comercial": "comercial@xuve.ve / comercial123 (KYC APPROVED)",
+            "rent_owner": "rent@xuve.ve / rent123 (KYC APPROVED)",
+            "carga_pesada": "carga@xuve.ve / carga123 (KYC APPROVED - Licencia 5ta)",
+            "line_admin": "linea@xuve.ve / linea123 (KYC APPROVED - Terminal B2B)",
+            "chofer_linea": "chofer@xuve.ve / chofer123 (KYC APPROVED - Licencia 5ta)",
+            "urban_line_admin": "linea.urbana@xuve.ve / urbana123 (KYC APPROVED - Línea Urbana B2B)",
+            "chofer_urbano": "chofer.urbano@xuve.ve / urbano123 (KYC APPROVED - Licencia 5ta)",
+            "pending_conductor": "nuevo.conductor@xuve.ve / pending123 (KYC PENDING - Para pruebas)",
+            "pending_linea": "nueva.linea@xuve.ve / pending123 (KYC PENDING - Para pruebas)",
         },
     }

@@ -1,4 +1,4 @@
-# Imagen de producción LIGERA del backend OMNI (FastAPI) para AWS App Runner.
+# Imagen de producción LIGERA del backend Xuve (FastAPI) para AWS App Runner.
 # Instala solo las dependencias realmente importadas por el código.
 FROM python:3.12-slim
 

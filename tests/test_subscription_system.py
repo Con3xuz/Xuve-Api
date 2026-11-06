@@ -1,5 +1,5 @@
 """
-Test Suite for OMNI Daily Subscription System
+Test Suite for Xuve Daily Subscription System
 ==============================================
 Tests the new economic model: $1 USD/day subscription for all partners.
 - No transaction commissions (10%, 12%, etc. removed)
@@ -18,10 +18,10 @@ BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials from iteration_12.json
 TEST_CREDENTIALS = {
-    "conductor": {"email": "conductor@omni.ve", "password": "conductor123"},
-    "repartidor": {"email": "repartidor@omni.ve", "password": "repartidor123"},
-    "admin": {"email": "admin@omni.ve", "password": "admin123"},
-    "cliente": {"email": "cliente@omni.ve", "password": "cliente123"},
+    "conductor": {"email": "conductor@xuve.ve", "password": "conductor123"},
+    "repartidor": {"email": "repartidor@xuve.ve", "password": "repartidor123"},
+    "admin": {"email": "admin@xuve.ve", "password": "admin123"},
+    "cliente": {"email": "cliente@xuve.ve", "password": "cliente123"},
 }
 
 

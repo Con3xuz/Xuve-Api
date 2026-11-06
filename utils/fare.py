@@ -1,5 +1,5 @@
 """
-OMNI / Xuve — Esqueleto de cálculo de tarifas (mercado P2P).
+Xuve / Xuve — Esqueleto de cálculo de tarifas (mercado P2P).
 ============================================================
 Función BASE para estimar la tarifa de un viaje. Pensada para la dinámica de
 pueblos y ciudades pequeñas: hay un "piso" (tarifa mínima) por tipo de vehículo,

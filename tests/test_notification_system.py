@@ -1,5 +1,5 @@
 """
-Test Notification System - OMNI SuperApp
+Test Notification System - Xuve SuperApp
 Tests for notification CRUD operations and user-specific notifications
 """
 
@@ -32,16 +32,16 @@ class TestNotificationSystem:
     # ==================== CLIENTE NOTIFICATIONS ====================
 
     def test_cliente_login_success(self):
-        """Test cliente@omni.ve can login"""
-        token, user = self.login("cliente@omni.ve", "cliente123")
+        """Test cliente@xuve.ve can login"""
+        token, user = self.login("cliente@xuve.ve", "cliente123")
         assert token is not None, "Cliente login failed"
         assert user is not None, "User data not returned"
-        assert user.get("email") == "cliente@omni.ve"
+        assert user.get("email") == "cliente@xuve.ve"
         print(f"Cliente login successful, user_id: {user.get('user_id')}")
 
     def test_cliente_get_notifications(self):
         """Test GET /api/notifications for cliente - should include prescription notifications"""
-        token, user = self.login("cliente@omni.ve", "cliente123")
+        token, user = self.login("cliente@xuve.ve", "cliente123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -78,11 +78,11 @@ class TestNotificationSystem:
     # ==================== FARMABIEN (COMERCIO) NOTIFICATIONS ====================
 
     def test_farmabien_login_success(self):
-        """Test farmabien@omni.ve can login"""
-        token, user = self.login("farmabien@omni.ve", "farmabien123")
+        """Test farmabien@xuve.ve can login"""
+        token, user = self.login("farmabien@xuve.ve", "farmabien123")
         assert token is not None, "Farmabien login failed"
         assert user is not None, "User data not returned"
-        assert user.get("email") == "farmabien@omni.ve"
+        assert user.get("email") == "farmabien@xuve.ve"
         assert (
             user.get("role") == "socio_comercial"
         ), f"Expected role 'socio_comercial', got {user.get('role')}"
@@ -90,7 +90,7 @@ class TestNotificationSystem:
 
     def test_farmabien_get_notifications_by_store_id(self):
         """Test GET /api/notifications for farmabien - should include store_id based notifications"""
-        token, user = self.login("farmabien@omni.ve", "farmabien123")
+        token, user = self.login("farmabien@xuve.ve", "farmabien123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -117,16 +117,16 @@ class TestNotificationSystem:
     # ==================== MEDICO NOTIFICATIONS ====================
 
     def test_medico_login_success(self):
-        """Test medico@omni.ve can login"""
-        token, user = self.login("medico@omni.ve", "medico123")
+        """Test medico@xuve.ve can login"""
+        token, user = self.login("medico@xuve.ve", "medico123")
         assert token is not None, "Medico login failed"
         assert user is not None, "User data not returned"
-        assert user.get("email") == "medico@omni.ve"
+        assert user.get("email") == "medico@xuve.ve"
         print(f"Medico login successful, role: {user.get('role')}")
 
     def test_medico_get_notifications(self):
         """Test GET /api/notifications for medico"""
-        token, user = self.login("medico@omni.ve", "medico123")
+        token, user = self.login("medico@xuve.ve", "medico123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -146,15 +146,15 @@ class TestNotificationSystem:
     # ==================== CONDUCTOR NOTIFICATIONS ====================
 
     def test_conductor_login_success(self):
-        """Test conductor@omni.ve can login"""
-        token, user = self.login("conductor@omni.ve", "conductor123")
+        """Test conductor@xuve.ve can login"""
+        token, user = self.login("conductor@xuve.ve", "conductor123")
         assert token is not None, "Conductor login failed"
-        assert user.get("email") == "conductor@omni.ve"
+        assert user.get("email") == "conductor@xuve.ve"
         print(f"Conductor login successful, role: {user.get('role')}")
 
     def test_conductor_get_notifications(self):
         """Test GET /api/notifications for conductor"""
-        token, user = self.login("conductor@omni.ve", "conductor123")
+        token, user = self.login("conductor@xuve.ve", "conductor123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -174,15 +174,15 @@ class TestNotificationSystem:
     # ==================== REPARTIDOR NOTIFICATIONS ====================
 
     def test_repartidor_login_success(self):
-        """Test repartidor@omni.ve can login"""
-        token, user = self.login("repartidor@omni.ve", "repartidor123")
+        """Test repartidor@xuve.ve can login"""
+        token, user = self.login("repartidor@xuve.ve", "repartidor123")
         assert token is not None, "Repartidor login failed"
-        assert user.get("email") == "repartidor@omni.ve"
+        assert user.get("email") == "repartidor@xuve.ve"
         print(f"Repartidor login successful, role: {user.get('role')}")
 
     def test_repartidor_get_notifications(self):
         """Test GET /api/notifications for repartidor"""
-        token, user = self.login("repartidor@omni.ve", "repartidor123")
+        token, user = self.login("repartidor@xuve.ve", "repartidor123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -202,15 +202,15 @@ class TestNotificationSystem:
     # ==================== COMERCIAL NOTIFICATIONS ====================
 
     def test_comercial_login_success(self):
-        """Test comercial@omni.ve can login"""
-        token, user = self.login("comercial@omni.ve", "comercial123")
+        """Test comercial@xuve.ve can login"""
+        token, user = self.login("comercial@xuve.ve", "comercial123")
         assert token is not None, "Comercial login failed"
-        assert user.get("email") == "comercial@omni.ve"
+        assert user.get("email") == "comercial@xuve.ve"
         print(f"Comercial login successful, role: {user.get('role')}")
 
     def test_comercial_get_notifications(self):
         """Test GET /api/notifications for comercial"""
-        token, user = self.login("comercial@omni.ve", "comercial123")
+        token, user = self.login("comercial@xuve.ve", "comercial123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -231,7 +231,7 @@ class TestNotificationSystem:
 
     def test_mark_notification_as_read(self):
         """Test POST /api/notifications/{id}/read"""
-        token, user = self.login("cliente@omni.ve", "cliente123")
+        token, user = self.login("cliente@xuve.ve", "cliente123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -274,7 +274,7 @@ class TestNotificationSystem:
 
     def test_mark_all_notifications_as_read(self):
         """Test POST /api/notifications/read-all"""
-        token, user = self.login("cliente@omni.ve", "cliente123")
+        token, user = self.login("cliente@xuve.ve", "cliente123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -302,7 +302,7 @@ class TestNotificationSystem:
 
     def test_delete_notification(self):
         """Test DELETE /api/notifications/{id}"""
-        token, user = self.login("cliente@omni.ve", "cliente123")
+        token, user = self.login("cliente@xuve.ve", "cliente123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -345,7 +345,7 @@ class TestNotificationSystem:
 
     def test_mark_nonexistent_notification_as_read(self):
         """Test marking non-existent notification returns 404"""
-        token, user = self.login("cliente@omni.ve", "cliente123")
+        token, user = self.login("cliente@xuve.ve", "cliente123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}
@@ -357,7 +357,7 @@ class TestNotificationSystem:
 
     def test_delete_nonexistent_notification(self):
         """Test deleting non-existent notification returns 404"""
-        token, user = self.login("cliente@omni.ve", "cliente123")
+        token, user = self.login("cliente@xuve.ve", "cliente123")
         assert token is not None, "Login failed"
 
         headers = {"Authorization": f"Bearer {token}"}

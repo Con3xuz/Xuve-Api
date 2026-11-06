@@ -57,7 +57,7 @@ async def create_order(order: OrderCreate, user: dict = Depends(get_current_user
     MODELO DESCENTRALIZADO (configurable desde admin):
     - El cliente paga el total de productos directamente al comercio (Cash/Pago Móvil)
     - El cliente paga el costo de envío directamente al repartidor
-    - OMNI descuenta el % configurado del total de productos del balance del Socio Comercial
+    - Xuve descuenta el % configurado del total de productos del balance del Socio Comercial
     """
     # Obtener configuración financiera
     config = await get_financial_config()
@@ -183,7 +183,7 @@ async def complete_order(order_id: str, user: dict = Depends(get_current_user)):
     ECONOMÍA DESCENTRALIZADA:
     - El cliente ya pagó productos al comercio (efectivo)
     - El cliente ya pagó envío al repartidor (efectivo)
-    - OMNI descuenta 12% del total de productos del balance del Socio Comercial
+    - Xuve descuenta 12% del total de productos del balance del Socio Comercial
     """
     order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
     if not order:

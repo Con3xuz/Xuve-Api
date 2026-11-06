@@ -1,5 +1,5 @@
 """
-OMNI - Modelos de Recetas Médicas
+Xuve - Modelos de Recetas Médicas
 =================================
 Sistema de recetas digitales que conecta médicos con Farmabien.
 """

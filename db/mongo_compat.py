@@ -1,11 +1,11 @@
 """
 Capa de compatibilidad MongoDB -> PostgreSQL (JSONB).
 
-Emula la porción de la API de `motor`/PyMongo que usa OMNI, respaldada por
+Emula la porción de la API de `motor`/PyMongo que usa Xuve, respaldada por
 PostgreSQL + JSONB, de modo que los ~675 call sites `db.col.op(...)` NO cambian.
 
 Diseño:
-- Cada colección es una tabla `omni.<col>` con columna `doc JSONB`.
+- Cada colección es una tabla `xuve.<col>` con columna `doc JSONB`.
 - `Database` -> `Collection` -> `Cursor`, con la misma firma async que motor.
 - Filtros y updates se traducen a SQL JSONB parametrizado (sin ORM, asyncpg directo).
 - `$inc` se ejecuta de forma atómica dentro de un único UPDATE (ACID real en saldos).
@@ -402,7 +402,7 @@ class Cursor:
 # ---------------------------------------------------------------------------
 def _minmax_sql(field: str, desc: bool, p: _Params) -> str:
     """min/max robusto para campos numéricos O strings ISO, en una sola expresión."""
-    kph = p.add(field)  # campos de min/max son de nivel superior en OMNI
+    kph = p.add(field)  # campos de min/max son de nivel superior en Xuve
     je = f"(doc -> {kph})"
     te = f"(doc ->> {kph})"
     direction = "DESC" if desc else "ASC"
@@ -552,7 +552,7 @@ def _sort_dict_to_list(sort_spec):
 class Collection:
     def __init__(self, name: str):
         self.name = name
-        self._t = f"omni.{name}"
+        self._t = f"xuve.{name}"
 
     async def _ensure(self, conn):
         """Crea la tabla on-the-fly si la colección no estaba en el bootstrap."""

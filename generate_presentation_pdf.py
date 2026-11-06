@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-OMNI SuperApp - Generador de PDF para Presentación Ejecutiva
+Xuve SuperApp - Generador de PDF para Presentación Ejecutiva
 """
 
 import os
@@ -27,10 +27,10 @@ from reportlab.platypus import (
 from reportlab.pdfgen import canvas
 
 # Colors
-OMNI_GREEN = HexColor("#39FF14")
-OMNI_DARK = HexColor("#121212")
-OMNI_GRAY = HexColor("#1a1a1a")
-OMNI_LIGHT_GRAY = HexColor("#2a2a2a")
+XUVE_GREEN = HexColor("#39FF14")
+XUVE_DARK = HexColor("#121212")
+XUVE_GRAY = HexColor("#1a1a1a")
+XUVE_LIGHT_GRAY = HexColor("#2a2a2a")
 WHITE = HexColor("#FFFFFF")
 YELLOW = HexColor("#FFD700")
 RED = HexColor("#FF4444")
@@ -49,7 +49,7 @@ def download_logo():
     return None
 
 
-class OMNIPDFGenerator:
+class XuvePDFGenerator:
     def __init__(self, output_path):
         self.output_path = output_path
         self.styles = getSampleStyleSheet()
@@ -59,10 +59,10 @@ class OMNIPDFGenerator:
         """Setup custom paragraph styles"""
         self.styles.add(
             ParagraphStyle(
-                name="OMNITitle",
+                name="XuveTitle",
                 fontSize=28,
                 leading=34,
-                textColor=OMNI_GREEN,
+                textColor=XUVE_GREEN,
                 alignment=TA_CENTER,
                 fontName="Helvetica-Bold",
                 spaceAfter=20,
@@ -71,7 +71,7 @@ class OMNIPDFGenerator:
 
         self.styles.add(
             ParagraphStyle(
-                name="OMNISubtitle",
+                name="XuveSubtitle",
                 fontSize=14,
                 leading=18,
                 textColor=grey,
@@ -86,7 +86,7 @@ class OMNIPDFGenerator:
                 name="SectionTitle",
                 fontSize=18,
                 leading=22,
-                textColor=OMNI_GREEN,
+                textColor=XUVE_GREEN,
                 fontName="Helvetica-Bold",
                 spaceBefore=20,
                 spaceAfter=12,
@@ -107,7 +107,7 @@ class OMNIPDFGenerator:
 
         self.styles.add(
             ParagraphStyle(
-                name="OMNIBodyText",
+                name="XuveBodyText",
                 fontSize=10,
                 leading=14,
                 textColor=black,
@@ -139,7 +139,7 @@ class OMNIPDFGenerator:
             )
         )
 
-    def create_table(self, data, col_widths=None, header_color=OMNI_GREEN):
+    def create_table(self, data, col_widths=None, header_color=XUVE_GREEN):
         """Create a styled table"""
         if col_widths is None:
             col_widths = [2 * inch] * len(data[0])
@@ -202,11 +202,11 @@ class OMNIPDFGenerator:
             story.append(logo)
 
         story.append(Spacer(1, 0.5 * inch))
-        story.append(Paragraph("OMNI SuperApp", self.styles["OMNITitle"]))
+        story.append(Paragraph("Xuve SuperApp", self.styles["XuveTitle"]))
         story.append(
             Paragraph(
                 "Plataforma de Movilidad y Comercio para Venezuela",
-                self.styles["OMNISubtitle"],
+                self.styles["XuveSubtitle"],
             )
         )
         story.append(Spacer(1, 0.5 * inch))
@@ -222,13 +222,13 @@ class OMNIPDFGenerator:
         cover_table.setStyle(
             TableStyle(
                 [
-                    ("BACKGROUND", (0, 0), (-1, 0), OMNI_GREEN),
+                    ("BACKGROUND", (0, 0), (-1, 0), XUVE_GREEN),
                     ("TEXTCOLOR", (0, 0), (-1, 0), black),
                     ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
                     ("FONTSIZE", (0, 0), (-1, 0), 12),
                     ("ALIGN", (0, 0), (-1, -1), "CENTER"),
                     ("BACKGROUND", (0, 1), (-1, -1), HexColor("#F5F5F5")),
-                    ("GRID", (0, 0), (-1, -1), 1, OMNI_GREEN),
+                    ("GRID", (0, 0), (-1, -1), 1, XUVE_GREEN),
                     ("TOPPADDING", (0, 0), (-1, -1), 10),
                     ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
                 ]
@@ -239,14 +239,14 @@ class OMNIPDFGenerator:
 
         story.append(PageBreak())
 
-        # ============ PAGE 2: QUÉ ES OMNI ============
-        story.append(Paragraph("1. ¿Qué es OMNI?", self.styles["SectionTitle"]))
+        # ============ PAGE 2: QUÉ ES Xuve ============
+        story.append(Paragraph("1. ¿Qué es Xuve?", self.styles["SectionTitle"]))
         story.append(
             Paragraph(
-                "<b>OMNI</b> es una <b>SuperApp de movilidad y comercio</b> diseñada específicamente para "
+                "<b>Xuve</b> es una <b>SuperApp de movilidad y comercio</b> diseñada específicamente para "
                 "<b>Venezuela</b>, que integra múltiples servicios de transporte, delivery, marketplace y "
                 "alquiler de vehículos en una sola plataforma.",
-                self.styles["OMNIBodyText"],
+                self.styles["XuveBodyText"],
             )
         )
         story.append(Spacer(1, 0.2 * inch))
@@ -263,7 +263,7 @@ class OMNIPDFGenerator:
             "Chat integrado - Comunicación fluida entre todas las partes",
         ]
         for f in features:
-            story.append(Paragraph(f"• {f}", self.styles["OMNIBodyText"]))
+            story.append(Paragraph(f"• {f}", self.styles["XuveBodyText"]))
 
         story.append(Spacer(1, 0.3 * inch))
 
@@ -304,7 +304,7 @@ class OMNIPDFGenerator:
             ["Torniquete digital", "QR único por chofer para cobro de pasaje"],
             ["Vista de rutas", "Mapa o Lista (toggle)"],
             ["Pago de pasaje", "Escáner QR + descuento de wallet"],
-            ["Fee fijo", "$0.02 USD por pasaje para OMNI"],
+            ["Fee fijo", "$0.02 USD por pasaje para Xuve"],
         ]
         story.append(self.create_table(buseta_data, [1.8 * inch, 4.2 * inch]))
         story.append(Spacer(1, 0.2 * inch))
@@ -362,7 +362,7 @@ class OMNIPDFGenerator:
         )
         chat_data = [
             ["Tipo", "Descripción"],
-            ["Chat Operativo", "Soporte OMNI, mensajes generales"],
+            ["Chat Operativo", "Soporte Xuve, mensajes generales"],
             ["Chat de Servicio", "Cliente ↔ Conductor/Repartidor (estilo Uber)"],
             ["Mensajes rápidos", "Predefinidos según rol"],
             ["Compartir ubicación", "Link de Google Maps en tiempo real"],
@@ -394,7 +394,7 @@ class OMNIPDFGenerator:
         )
 
         comision_data = [
-            ["Vertical", "Comisión OMNI"],
+            ["Vertical", "Comisión Xuve"],
             ["Transporte (Taxis)", "10%"],
             ["Market/Delivery", "12%"],
             ["Rent-a-Car", "10%"],
@@ -530,12 +530,12 @@ class OMNIPDFGenerator:
         story.append(Paragraph("Credenciales de Demo", self.styles["SubsectionTitle"]))
         creds_data = [
             ["Rol", "Email", "Password"],
-            ["Admin", "admin@omni.ve", "admin123"],
-            ["Cliente", "cliente@omni.ve", "cliente123"],
-            ["Conductor", "conductor@omni.ve", "conductor123"],
-            ["Repartidor", "repartidor@omni.ve", "repartidor123"],
-            ["Comercial", "comercial@omni.ve", "comercial123"],
-            ["Línea Urbana", "linea@omni.ve", "linea123"],
+            ["Admin", "admin@xuve.ve", "admin123"],
+            ["Cliente", "cliente@xuve.ve", "cliente123"],
+            ["Conductor", "conductor@xuve.ve", "conductor123"],
+            ["Repartidor", "repartidor@xuve.ve", "repartidor123"],
+            ["Comercial", "comercial@xuve.ve", "comercial123"],
+            ["Línea Urbana", "linea@xuve.ve", "linea123"],
         ]
         story.append(self.create_table(creds_data, [1.5 * inch, 2.5 * inch, 2 * inch]))
 
@@ -548,7 +548,7 @@ class OMNIPDFGenerator:
                 "<b>Google Maps:</b> Muestra marca de agua 'For development purposes only'. "
                 "Requiere activar facturación en Google Cloud Console. "
                 "<b>Solución implementada:</b> Fallbacks de búsqueda por texto que funcionan 100% sin el mapa.",
-                self.styles["OMNIBodyText"],
+                self.styles["XuveBodyText"],
             )
         )
 
@@ -558,7 +558,7 @@ class OMNIPDFGenerator:
 
 
 if __name__ == "__main__":
-    output_file = "/app/OMNI_SuperApp_Presentacion_Ejecutiva.pdf"
-    generator = OMNIPDFGenerator(output_file)
+    output_file = "/app/Xuve_SuperApp_Presentacion_Ejecutiva.pdf"
+    generator = XuvePDFGenerator(output_file)
     result = generator.generate()
     print(f"PDF generado exitosamente: {result}")

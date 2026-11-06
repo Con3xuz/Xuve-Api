@@ -1,5 +1,5 @@
 """
-OMNI SuperApp Backend API Tests
+Xuve SuperApp Backend API Tests
 Testing: Admin login, admin routes protection, driver registration role protection, market, rent, wallet
 """
 
@@ -11,7 +11,7 @@ import uuid
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials
-ADMIN_EMAIL = "admin@omni.ve"
+ADMIN_EMAIL = "admin@xuve.ve"
 ADMIN_PASSWORD = "admin123"
 
 
@@ -259,7 +259,7 @@ class TestNewUserRegistrationAndDriverRole:
 
 
 class TestMarketEndpoints:
-    """Test OMNI Market endpoints"""
+    """Test Xuve Market endpoints"""
 
     def test_get_stores(self):
         """Test getting market stores"""
@@ -310,7 +310,7 @@ class TestMarketEndpoints:
 
 
 class TestRentEndpoints:
-    """Test OMNI Rent endpoints"""
+    """Test Xuve Rent endpoints"""
 
     def test_get_available_cars(self):
         """Test getting available cars for rent"""
@@ -332,7 +332,7 @@ class TestRentEndpoints:
         data = response.json()
         assert isinstance(data, list), "Response should be a list"
 
-        print(f"✅ OMNI Rent: Found {len(data)} available cars")
+        print(f"✅ Xuve Rent: Found {len(data)} available cars")
 
     def test_publish_car_for_rent(self):
         """Test publishing a car for rent"""
@@ -369,7 +369,7 @@ class TestRentEndpoints:
         assert data["brand"] == "Ford"
         assert data["daily_price"] == 30.0
 
-        print(f"✅ OMNI Rent: Published car with ID {data['car_id']}")
+        print(f"✅ Xuve Rent: Published car with ID {data['car_id']}")
 
 
 class TestWalletEndpoints:

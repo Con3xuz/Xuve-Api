@@ -1,5 +1,5 @@
 """
-OMNI SuperApp P0 Features Tests - Iteration 4
+Xuve SuperApp P0 Features Tests - Iteration 4
 ==============================================
 Testing:
 1. Profile Page - /api/auth/me and /api/user/profile endpoints
@@ -17,11 +17,11 @@ BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials - P0 users
 TEST_USERS = {
-    "cliente": {"email": "cliente@omni.ve", "password": "cliente123"},
-    "comercial": {"email": "comercial@omni.ve", "password": "comercial123"},
-    "rent_owner": {"email": "rent@omni.ve", "password": "rent123"},
-    "conductor": {"email": "conductor@omni.ve", "password": "conductor123"},
-    "repartidor": {"email": "repartidor@omni.ve", "password": "repartidor123"},
+    "cliente": {"email": "cliente@xuve.ve", "password": "cliente123"},
+    "comercial": {"email": "comercial@xuve.ve", "password": "comercial123"},
+    "rent_owner": {"email": "rent@xuve.ve", "password": "rent123"},
+    "conductor": {"email": "conductor@xuve.ve", "password": "conductor123"},
+    "repartidor": {"email": "repartidor@xuve.ve", "password": "repartidor123"},
 }
 
 

@@ -30,7 +30,7 @@ router = APIRouter(prefix="/geo", tags=["Geo"])
 GOOGLE_MAPS_SERVER_KEY = os.environ.get("GOOGLE_MAPS_SERVER_KEY", "")
 GOOGLE_BASE = "https://maps.googleapis.com/maps/api"
 
-# Sesgo geográfico por defecto: Mérida, Venezuela (núcleo operativo de OMNI).
+# Sesgo geográfico por defecto: Mérida, Venezuela (núcleo operativo de Xuve).
 DEFAULT_LANGUAGE = "es"
 DEFAULT_REGION = "ve"
 DEFAULT_COMPONENTS = "country:ve"  # cobertura NACIONAL: restringe a Venezuela, sin fijar ciudad

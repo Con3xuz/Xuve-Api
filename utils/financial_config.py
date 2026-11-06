@@ -1,5 +1,5 @@
 """
-OMNI - Configuración Financiera (v2.0 - Modelo de Suscripción)
+Xuve - Configuración Financiera (v2.0 - Modelo de Suscripción)
 ==============================================================
 NOTA: Las comisiones por transacción han sido ELIMINADAS.
 El nuevo modelo es: $1 USD/día para socios.

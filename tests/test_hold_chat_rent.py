@@ -1,5 +1,5 @@
 """
-Test Suite for OMNI SuperApp - Hold, Service Chat, and Rent Features
+Test Suite for Xuve SuperApp - Hold, Service Chat, and Rent Features
 =====================================================================
 Tests the new Hold system, ServiceChat, and Rent-a-Car integration
 """
@@ -12,9 +12,9 @@ import time
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 
 # Test credentials
-CLIENTE_EMAIL = "cliente@omni.ve"
+CLIENTE_EMAIL = "cliente@xuve.ve"
 CLIENTE_PASSWORD = "cliente123"
-CONDUCTOR_EMAIL = "conductor@omni.ve"
+CONDUCTOR_EMAIL = "conductor@xuve.ve"
 CONDUCTOR_PASSWORD = "conductor123"
 
 

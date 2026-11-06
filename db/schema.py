@@ -1,7 +1,7 @@
 """
-Esquema PostgreSQL para el almacén documental JSONB de OMNI.
+Esquema PostgreSQL para el almacén documental JSONB de Xuve.
 
-Cada "colección" de MongoDB se mapea a una tabla `omni.<coleccion>` con la forma:
+Cada "colección" de MongoDB se mapea a una tabla `xuve.<coleccion>` con la forma:
     pk         BIGSERIAL PRIMARY KEY
     doc        JSONB NOT NULL      -- el documento completo
     created_at timestamptz DEFAULT now()
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 _VALID_NAME = re.compile(r"^[a-z_][a-z0-9_]*$")
 
-# --- Las ~62 colecciones del ecosistema OMNI (extraídas del código) ----------
+# --- Las ~62 colecciones del ecosistema Xuve (extraídas del código) ----------
 COLLECTIONS = [
     "users",
     "user_sessions",
@@ -99,85 +99,85 @@ COLLECTIONS = [
 # Formato: "<coleccion>": [lista de sentencias CREATE INDEX idempotentes].
 _INDEXES: dict[str, list[str]] = {
     "users": [
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_id ON omni.users ((doc->>'user_id'))",
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON omni.users ((doc->>'email'))",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_id ON xuve.users ((doc->>'user_id'))",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON xuve.users ((doc->>'email'))",
     ],
     "user_sessions": [
-        "CREATE INDEX IF NOT EXISTS idx_sessions_token ON omni.user_sessions ((doc->>'session_token'))",
+        "CREATE INDEX IF NOT EXISTS idx_sessions_token ON xuve.user_sessions ((doc->>'session_token'))",
     ],
     "email_verifications": [
-        "CREATE INDEX IF NOT EXISTS idx_emailver_email ON omni.email_verifications ((doc->>'email'))",
-        "CREATE INDEX IF NOT EXISTS idx_emailver_code ON omni.email_verifications ((doc->>'code'))",
+        "CREATE INDEX IF NOT EXISTS idx_emailver_email ON xuve.email_verifications ((doc->>'email'))",
+        "CREATE INDEX IF NOT EXISTS idx_emailver_code ON xuve.email_verifications ((doc->>'code'))",
     ],
     "password_resets": [
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_pwreset_token ON omni.password_resets ((doc->>'token'))",
-        "CREATE INDEX IF NOT EXISTS idx_pwreset_email ON omni.password_resets ((doc->>'email'))",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_pwreset_token ON xuve.password_resets ((doc->>'token'))",
+        "CREATE INDEX IF NOT EXISTS idx_pwreset_email ON xuve.password_resets ((doc->>'email'))",
     ],
     "services": [
-        "CREATE INDEX IF NOT EXISTS idx_services_status ON omni.services ((doc->>'status'))",
-        "CREATE INDEX IF NOT EXISTS idx_services_user ON omni.services ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_services_status ON xuve.services ((doc->>'status'))",
+        "CREATE INDEX IF NOT EXISTS idx_services_user ON xuve.services ((doc->>'user_id'))",
     ],
     "transactions": [
-        "CREATE INDEX IF NOT EXISTS idx_transactions_user ON omni.transactions ((doc->>'user_id'))",
-        "CREATE INDEX IF NOT EXISTS idx_transactions_type ON omni.transactions ((doc->>'type'))",
+        "CREATE INDEX IF NOT EXISTS idx_transactions_user ON xuve.transactions ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_transactions_type ON xuve.transactions ((doc->>'type'))",
     ],
     "wallet_holds": [
-        "CREATE INDEX IF NOT EXISTS idx_holds_user ON omni.wallet_holds ((doc->>'user_id'))",
-        "CREATE INDEX IF NOT EXISTS idx_holds_id ON omni.wallet_holds ((doc->>'hold_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_holds_user ON xuve.wallet_holds ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_holds_id ON xuve.wallet_holds ((doc->>'hold_id'))",
     ],
     "store_profiles": [
-        "CREATE INDEX IF NOT EXISTS idx_store_user ON omni.store_profiles ((doc->>'user_id'))",
-        "CREATE INDEX IF NOT EXISTS idx_store_id ON omni.store_profiles ((doc->>'store_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_store_user ON xuve.store_profiles ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_store_id ON xuve.store_profiles ((doc->>'store_id'))",
     ],
     "market_products": [
-        "CREATE INDEX IF NOT EXISTS idx_products_store ON omni.market_products ((doc->>'store_id'))",
-        "CREATE INDEX IF NOT EXISTS idx_products_id ON omni.market_products ((doc->>'product_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_products_store ON xuve.market_products ((doc->>'store_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_products_id ON xuve.market_products ((doc->>'product_id'))",
     ],
     "orders": [
-        "CREATE INDEX IF NOT EXISTS idx_orders_store ON omni.orders ((doc->>'store_id'))",
-        "CREATE INDEX IF NOT EXISTS idx_orders_user ON omni.orders ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_orders_store ON xuve.orders ((doc->>'store_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_orders_user ON xuve.orders ((doc->>'user_id'))",
     ],
     "notifications": [
-        "CREATE INDEX IF NOT EXISTS idx_notif_user ON omni.notifications ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_notif_user ON xuve.notifications ((doc->>'user_id'))",
     ],
     "kyc_requests": [
-        "CREATE INDEX IF NOT EXISTS idx_kyc_user ON omni.kyc_requests ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_kyc_user ON xuve.kyc_requests ((doc->>'user_id'))",
     ],
     "drivers": [
-        "CREATE INDEX IF NOT EXISTS idx_drivers_user ON omni.drivers ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_drivers_user ON xuve.drivers ((doc->>'user_id'))",
     ],
     "socios_conductores": [
-        "CREATE INDEX IF NOT EXISTS idx_sc_user ON omni.socios_conductores ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_sc_user ON xuve.socios_conductores ((doc->>'user_id'))",
     ],
     "socios_repartidores": [
-        "CREATE INDEX IF NOT EXISTS idx_sr_user ON omni.socios_repartidores ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_sr_user ON xuve.socios_repartidores ((doc->>'user_id'))",
     ],
     "socios_comerciales": [
-        "CREATE INDEX IF NOT EXISTS idx_scom_user ON omni.socios_comerciales ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_scom_user ON xuve.socios_comerciales ((doc->>'user_id'))",
     ],
     "subscription_payments": [
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_subpay_ref ON omni.subscription_payments ((doc->>'reference'))",
-        "CREATE INDEX IF NOT EXISTS idx_subpay_user ON omni.subscription_payments ((doc->>'user_id'))",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_subpay_ref ON xuve.subscription_payments ((doc->>'reference'))",
+        "CREATE INDEX IF NOT EXISTS idx_subpay_user ON xuve.subscription_payments ((doc->>'user_id'))",
     ],
     "daily_subscriptions": [
-        "CREATE INDEX IF NOT EXISTS idx_subs_user ON omni.daily_subscriptions ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_subs_user ON xuve.daily_subscriptions ((doc->>'user_id'))",
     ],
     "chat_conversations": [
-        "CREATE INDEX IF NOT EXISTS idx_conv_id ON omni.chat_conversations ((doc->>'conversation_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_conv_id ON xuve.chat_conversations ((doc->>'conversation_id'))",
     ],
     "chat_messages": [
-        "CREATE INDEX IF NOT EXISTS idx_msg_conv ON omni.chat_messages ((doc->>'conversation_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_msg_conv ON xuve.chat_messages ((doc->>'conversation_id'))",
     ],
     "prescriptions": [
-        "CREATE INDEX IF NOT EXISTS idx_presc_user ON omni.prescriptions ((doc->>'user_id'))",
+        "CREATE INDEX IF NOT EXISTS idx_presc_user ON xuve.prescriptions ((doc->>'user_id'))",
     ],
     "viajes_interurbano": [
-        "CREATE INDEX IF NOT EXISTS idx_viajes_status ON omni.viajes_interurbano ((doc->>'status'))",
+        "CREATE INDEX IF NOT EXISTS idx_viajes_status ON xuve.viajes_interurbano ((doc->>'status'))",
     ],
 }
 
 _TABLE_DDL = """
-CREATE TABLE IF NOT EXISTS omni.{name} (
+CREATE TABLE IF NOT EXISTS xuve.{name} (
     pk         BIGSERIAL PRIMARY KEY,
     doc        JSONB NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now()
@@ -192,10 +192,10 @@ def _check(name: str) -> str:
 
 
 async def bootstrap_schema() -> None:
-    """Crea (idempotente) el schema `omni`, todas las tablas y sus índices."""
+    """Crea (idempotente) el schema `xuve`, todas las tablas y sus índices."""
     pool = get_pool()
     async with pool.acquire() as conn:
-        await conn.execute("CREATE SCHEMA IF NOT EXISTS omni")
+        await conn.execute("CREATE SCHEMA IF NOT EXISTS xuve")
         for name in COLLECTIONS:
             await conn.execute(_TABLE_DDL.format(name=_check(name)))
         for name, statements in _INDEXES.items():
@@ -204,4 +204,4 @@ async def bootstrap_schema() -> None:
                     await conn.execute(stmt)
                 except Exception as exc:  # índice único sobre datos sucios, etc.
                     logger.warning("No se pudo crear índice (%s): %s", name, exc)
-    logger.info("Esquema OMNI verificado: %d colecciones", len(COLLECTIONS))
+    logger.info("Esquema Xuve verificado: %d colecciones", len(COLLECTIONS))

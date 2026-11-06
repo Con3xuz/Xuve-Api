@@ -1,5 +1,5 @@
 """
-OMNI - Rutas de Suscripción Diaria
+Xuve - Rutas de Suscripción Diaria
 ==================================
 Endpoints para el sistema de suscripción de $1/día para socios.
 """
@@ -85,7 +85,7 @@ async def get_subscription_info():
         "free_trial_days": await get_free_trial_days(),
         "currency": "USD",
         "valid_until": "23:59:59 (medianoche)",
-        "description": "Suscripción diaria para operar en la plataforma OMNI",
+        "description": "Suscripción diaria para operar en la plataforma Xuve",
     }
 
 

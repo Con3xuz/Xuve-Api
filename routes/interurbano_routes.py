@@ -151,7 +151,7 @@ async def completar_viaje(viaje_id: str, user: dict = Depends(get_current_user))
     Completar viaje y cobrar comisión.
 
     El cliente paga directo al chofer (cash).
-    OMNI cobra el % configurado del total de boletos vendidos de la wallet de la línea.
+    Xuve cobra el % configurado del total de boletos vendidos de la wallet de la línea.
     """
     viaje = await db.viajes_interurbano.find_one({"viaje_id": viaje_id}, {"_id": 0})
     if not viaje:

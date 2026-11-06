@@ -659,7 +659,7 @@ async def iniciar_recorrido_urbano(
     # Datos del QR
     qr_data = json.dumps(
         {
-            "type": "omni_pasaje_urbano",
+            "type": "xuve_pasaje_urbano",
             "recorrido_id": recorrido_id,
             "ruta_id": asignacion["ruta_id"],
             "ruta_codigo": asignacion["ruta_codigo"],
@@ -831,7 +831,7 @@ async def pagar_pasaje_urbano(request: Request, user: dict = Depends(get_current
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="QR inválido")
 
-    if qr_data.get("type") != "omni_pasaje_urbano":
+    if qr_data.get("type") != "xuve_pasaje_urbano":
         raise HTTPException(
             status_code=400, detail="Este QR no es válido para pasajes urbanos"
         )
@@ -861,8 +861,8 @@ async def pagar_pasaje_urbano(request: Request, user: dict = Depends(get_current
         )
 
     # Calcular distribución - obtener fee desde configuración admin
-    fee_omni = await get_urban_fee()
-    monto_linea = tarifa - fee_omni
+    fee_xuve = await get_urban_fee()
+    monto_linea = tarifa - fee_xuve
 
     # Descontar del cliente
     await db.users.update_one(
@@ -913,7 +913,7 @@ async def pagar_pasaje_urbano(request: Request, user: dict = Depends(get_current
             "linea_id": linea_id,
             "user_id": user["user_id"],
             "tarifa": tarifa,
-            "fee_omni": fee_omni,
+            "fee_xuve": fee_xuve,
             "monto_linea": monto_linea,
             "created_at": datetime.now(timezone.utc).isoformat(),
         }

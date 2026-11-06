@@ -1,4 +1,4 @@
-# Models module - All Pydantic models for OMNI SuperApp
+# Models module - All Pydantic models for Xuve SuperApp
 from models.user_models import (
     VALID_ROLES,
     CONDUCTOR_VEHICLE_TYPES,

@@ -1,5 +1,5 @@
 """
-OMNI SuperApp API v2.0 - Beta Estructural
+Xuve SuperApp API v2.0 - Beta Estructural
 ==========================================
 Clean, modular FastAPI server.
 All models are in /models/ and endpoints in /routes/
@@ -80,7 +80,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
-app = FastAPI(title="OMNI SuperApp API", version="2.0")
+app = FastAPI(title="Xuve SuperApp API", version="2.0")
 
 # Rate limiting: misma instancia que usan los decoradores por ruta.
 app.state.limiter = limiter
@@ -130,7 +130,7 @@ app.include_router(payment_method_router, prefix="/api/v1")
 @app.get("/api/")
 async def root():
     return {
-        "message": "OMNI SuperApp API v2.0 - Beta Estructural",
+        "message": "Xuve SuperApp API v2.0 - Beta Estructural",
         "status": "online",
         "roles": VALID_ROLES,
         "architecture": "Modular (FastAPI Best Practices)",

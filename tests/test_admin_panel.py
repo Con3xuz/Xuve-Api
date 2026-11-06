@@ -1,5 +1,5 @@
 """
-Test suite for Admin Panel (/admin) - Panel de Administración OMNI
+Test suite for Admin Panel (/admin) - Panel de Administración Xuve
 Testing endpoints for:
 1. KPIs Globales - /api/admin/stats
 2. Verificación KYC - /api/admin/kyc/all-pending
@@ -26,7 +26,7 @@ class TestAdminAuth:
         # Login as admin
         login_response = self.session.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@omni.ve", "password": "admin123"},
+            json={"email": "admin@xuve.ve", "password": "admin123"},
         )
         assert (
             login_response.status_code == 200
@@ -45,10 +45,10 @@ class TestAdminAuth:
         )
 
     def test_admin_login_success(self):
-        """Verify admin can login with admin@omni.ve / admin123"""
+        """Verify admin can login with admin@xuve.ve / admin123"""
         # Login already done in setup, just verify token exists
         assert self.token is not None
-        print("PASS: Admin login with admin@omni.ve / admin123")
+        print("PASS: Admin login with admin@xuve.ve / admin123")
 
 
 class TestAdminKPIsGlobales:
@@ -62,7 +62,7 @@ class TestAdminKPIsGlobales:
 
         login_response = self.session.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@omni.ve", "password": "admin123"},
+            json={"email": "admin@xuve.ve", "password": "admin123"},
         )
         assert login_response.status_code == 200
         self.token = login_response.json()["token"]
@@ -82,7 +82,7 @@ class TestAdminKPIsGlobales:
             "viajes_programados",  # Viajes programados
             "orders",  # Órdenes market
             "volumen_transaccionado",  # Volumen transaccionado
-            "ingresos_plataforma",  # Ingresos OMNI
+            "ingresos_plataforma",  # Ingresos Xuve
         ]
 
         for field in required_fields:
@@ -138,7 +138,7 @@ class TestAdminKYCVerification:
 
         login_response = self.session.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@omni.ve", "password": "admin123"},
+            json={"email": "admin@xuve.ve", "password": "admin123"},
         )
         assert login_response.status_code == 200
         self.token = login_response.json()["token"]
@@ -209,7 +209,7 @@ class TestAdminControlVerticales:
 
         login_response = self.session.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@omni.ve", "password": "admin123"},
+            json={"email": "admin@xuve.ve", "password": "admin123"},
         )
         assert login_response.status_code == 200
         self.token = login_response.json()["token"]
@@ -301,7 +301,7 @@ class TestAdminConfigFinanciera:
 
         login_response = self.session.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "admin@omni.ve", "password": "admin123"},
+            json={"email": "admin@xuve.ve", "password": "admin123"},
         )
         assert login_response.status_code == 200
         self.token = login_response.json()["token"]
@@ -391,7 +391,7 @@ class TestAdminAccessControl:
         # Login as regular user
         login_response = session.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": "cliente@omni.ve", "password": "cliente123"},
+            json={"email": "cliente@xuve.ve", "password": "cliente123"},
         )
 
         if login_response.status_code != 200:
