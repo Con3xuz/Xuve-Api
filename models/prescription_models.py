@@ -1,41 +1,31 @@
 """
-Xuve - Modelos de Recetas Médicas
-=================================
-Sistema de recetas digitales que conecta médicos con Farmabien.
+Modelos SQL de Médicos y Recetas Médicas Digitales (PostgreSQL - Esquema `xuve`).
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional, List
-from datetime import datetime
+from typing import Any, Dict, List, Optional
+from models.base import PostgresBaseModel
 
 
-class PrescriptionMedication(BaseModel):
-    """Medicamento individual en una receta"""
+class MedicoModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.medicos`."""
+    _table_name = "medicos"
 
-    name: str
-    dosage: str = ""
-    frequency: str = ""
-    duration: str = ""
-    quantity: int = 1
-    notes: str = ""
-    product_id: Optional[str] = None
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.medicos WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
 
 
-class PrescriptionCreate(BaseModel):
-    """Modelo para crear una receta"""
+class PrescriptionModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.prescriptions`."""
+    _table_name = "prescriptions"
 
-    patient_name: str = Field(..., min_length=1)
-    patient_cedula: str = Field(..., min_length=1)
-    patient_phone: str = ""
-    patient_email: str = ""
-    diagnosis: str = ""
-    medications: List[PrescriptionMedication] = []
-    notes: str = ""
-    pharmacy_store_id: Optional[str] = None
+    @classmethod
+    async def find_by_id(cls, prescription_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.prescriptions WHERE doc->>'prescription_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, prescription_id)
 
-
-class PrescriptionUpdate(BaseModel):
-    """Modelo para actualizar estado de receta"""
-
-    status: Optional[str] = None
-    pharmacy_notes: Optional[str] = None
+    @classmethod
+    async def list_by_patient_id(cls, patient_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.prescriptions WHERE doc->>'user_id' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, patient_id, limit)

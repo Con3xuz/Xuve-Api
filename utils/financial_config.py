@@ -1,107 +1,75 @@
 """
-Xuve - Configuración Financiera (v2.0 - Modelo de Suscripción)
-==============================================================
-NOTA: Las comisiones por transacción han sido ELIMINADAS.
-El nuevo modelo es: $1 USD/día para socios.
+Xuve - Configuración financiera (modelo de suscripción diaria).
 
-Este archivo mantiene solo:
-- Tasa de cambio USD/VES
-- Peajes (si aplican)
-- Configuración de suscripción diaria
+Todos los valores viven en la tabla `xuve.platform_settings` (ver
+db/migrations/001_catalogs.sql). Aquí NO hay valores por defecto: si falta una
+clave se lanza un error claro en vez de usar un número escondido en el código.
 """
 
-from utils.database import db
+from models.catalog_models import PlatformSettingModel
 
-# Valores por defecto
-DEFAULT_CONFIG = {
-    # Tasa de cambio
-    "exchange_rate": 50.0,
-    # Peajes (solo para información, no se cobran comisiones)
-    "toll_moto": 0.50,
-    "toll_others": 1.00,
-    # Sistema de suscripción diaria (NUEVO MODELO)
-    "daily_subscription_fee": 1.00,  # $1 USD por día
-    "free_trial_days": 3,  # 3 días gratis para nuevos socios
-    # Fee base de delivery (costo del servicio, no comisión)
-    "delivery_fee_base": 2.00,
-    # Fee de activación de líneas de transporte
-    "line_activation_fee": 5.00,
-    # ==========================================
-    # Comisiones configurables por el admin (descuento del balance del socio).
-    # Deben existir aquí para que get_financial_config() las preserve y para
-    # evitar KeyError en los módulos que las consultan (p.ej. market).
-    # ==========================================
-    "commission_transport": 0.10,   # 10% conductores
-    "commission_market": 0.12,       # 12% market (comercios)
-    "commission_rent": 0.10,         # 10% rent-a-car
-    "commission_interurbano": 0.10,  # 10% terminales interurbanos
-    "commission_linea": 0.10,        # 10% líneas de transporte
-    "urban_fee_fixed": 0.02,         # fee fijo transporte urbano
-    # ==========================================
-    # Tarifas de viaje P2P (Xuve). 'min' = piso/tarifa mínima; 'per_km' = costo
-    # por km por encima del piso. Ver utils/fare.py::estimate_fare.
-    # ==========================================
-    "fare_min_moto": 1.00,           # piso Moto/Mototaxi: $1.00 USD
-    "fare_min_auto": 2.00,           # piso Taxi/Carro: $2.00 USD
-    "fare_per_km_moto": 0.30,        # $/km moto (placeholder, ajustable por admin)
-    "fare_per_km_auto": 0.50,        # $/km auto (placeholder, ajustable por admin)
-}
+
+async def get_setting(key: str):
+    """Lee un parámetro de plataforma; falla si no existe en la BD."""
+    value = await PlatformSettingModel.get_value(key)
+    if value is None:
+        raise RuntimeError(
+            f"Falta el parámetro '{key}' en xuve.platform_settings. "
+            "Ejecuta las migraciones (db/migrations)."
+        )
+    return value
 
 
 async def get_financial_config() -> dict:
-    """
-    Obtener la configuración financiera actual desde la BD.
-    Si no existe, retorna los valores por defecto.
-    """
-    config = await db.platform_config.find_one({"type": "financial"}, {"_id": 0})
-
-    if not config:
-        return DEFAULT_CONFIG.copy()
-
-    # Combinar con defaults para asegurar que todos los campos existan
-    result = DEFAULT_CONFIG.copy()
-    result.update({k: v for k, v in config.items() if k in DEFAULT_CONFIG})
-    return result
+    """Todos los parámetros de plataforma como dict {clave: valor}."""
+    return await PlatformSettingModel.get_all()
 
 
 async def get_toll_amount(vehicle_type: str) -> float:
-    """Obtener el monto del peaje según el tipo de vehículo"""
-    config = await get_financial_config()
-    if vehicle_type == "moto":
-        return config["toll_moto"]
-    return config["toll_others"]
+    """Monto del peaje según el tipo de vehículo."""
+    return await get_setting("toll_moto" if vehicle_type == "moto" else "toll_others")
 
 
 async def get_exchange_rate() -> float:
-    """Obtener la tasa de cambio actual"""
-    config = await get_financial_config()
-    return config["exchange_rate"]
+    """Tasa de cambio USD/VES actual."""
+    return await get_setting("exchange_rate")
 
 
 async def get_fare_config() -> dict:
-    """
-    Parámetros de tarifa de viaje (pisos y costo por km), listos para
-    utils.fare.estimate_fare. Admin-configurables vía platform_config.
-    """
+    """Pisos y costo por km, listos para utils.fare.estimate_fare."""
     config = await get_financial_config()
-    return {
-        "fare_min_moto": config["fare_min_moto"],
-        "fare_min_auto": config["fare_min_auto"],
-        "fare_per_km_moto": config["fare_per_km_moto"],
-        "fare_per_km_auto": config["fare_per_km_auto"],
-    }
+    keys = ("fare_min_moto", "fare_min_auto", "fare_per_km_moto", "fare_per_km_auto")
+    return {k: config[k] for k in keys}
 
 
 async def get_daily_subscription_fee() -> float:
-    """Obtener el fee diario de suscripción"""
-    config = await get_financial_config()
-    return config.get("daily_subscription_fee", 1.00)
+    """Fee diario de suscripción."""
+    return await get_setting("daily_subscription_fee")
 
 
 async def get_free_trial_days() -> int:
-    """Obtener los días de prueba gratis"""
-    config = await get_financial_config()
-    return config.get("free_trial_days", 3)
+    """Días de prueba gratis."""
+    return await get_setting("free_trial_days")
+
+
+async def get_activation_fee() -> float:
+    return await get_setting("activation_fee")
+
+
+async def get_min_balance_to_activate() -> float:
+    return await get_setting("min_balance_activate")
+
+
+async def get_min_balance_to_connect() -> float:
+    return await get_setting("min_balance_connect")
+
+
+async def get_heavy_transport_commission() -> float:
+    return await get_setting("heavy_transport_commission")
+
+
+async def get_min_balance_heavy_transport() -> float:
+    return await get_setting("min_balance_heavy_transport")
 
 
 # ==========================================
@@ -113,30 +81,11 @@ async def get_free_trial_days() -> int:
 async def get_commission_rate(service_type: str) -> float:
     """
     DEPRECADA - El sistema de comisiones ha sido eliminado.
-    Ahora se usa suscripción diaria de $1 USD.
-    Retorna 0 por compatibilidad.
+    Ahora se usa suscripción diaria. Retorna 0 por compatibilidad.
     """
     return 0.0
 
 
 async def get_urban_fee() -> float:
-    """
-    DEPRECADA - El fee urbano ha sido eliminado.
-    Ahora se usa suscripción diaria de $1 USD.
-    Retorna 0 por compatibilidad.
-    """
+    """DEPRECADA - El fee urbano ha sido eliminado. Retorna 0 por compatibilidad."""
     return 0.0
-
-
-async def get_activation_fee() -> float:
-    """
-    DEPRECADA - Usar get_daily_subscription_fee() en su lugar.
-    """
-    return await get_daily_subscription_fee()
-
-
-async def get_min_balance_to_activate() -> float:
-    """
-    El saldo mínimo para activarse es igual al fee diario.
-    """
-    return await get_daily_subscription_fee()

@@ -1,79 +1,74 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional, List
-from datetime import datetime
+"""
+Modelos SQL de Servicios de Movilidad, Calificaciones y Disponibilidad (PostgreSQL - Esquema `xuve`).
+"""
+
+from typing import Any, Dict, List, Optional
 from enum import Enum
+from models.base import PostgresBaseModel
+
 
 class ServiceType(str, Enum):
     RIDE = "ride"
     DELIVERY = "delivery"
     GENERAL = "general"
 
+
 class ServiceStatus(str, Enum):
     PENDING = "pending"
-    MATCHING = "matching"
     ACCEPTED = "accepted"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
 
-class Location(BaseModel):
-    latitude: float
-    longitude: float
-    address: Optional[str] = None
 
-class ServiceRequest(BaseModel):
-    service_type: str  # movilidad, ruta_fija, carga_gas, market
-    pickup_lat: Optional[float] = None
-    pickup_lng: Optional[float] = None
-    pickup_address: Optional[str] = None
-    dropoff_lat: Optional[float] = None
-    dropoff_lng: Optional[float] = None
-    dropoff_address: Optional[str] = None
-    vehicle_preference: Optional[str] = None
-    payment_method: Optional[str] = None  # efectivo, pago_movil, wallet
-    estimated_fare: Optional[float] = None
-    route_id: Optional[str] = None
-    notes: Optional[str] = None
+class ServiceModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.services`."""
+    _table_name = "services"
 
-class Service(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    service_id: str
-    user_id: str
-    driver_id: Optional[str] = None
-    service_type: str
-    status: str  # pending, accepted, in_progress, completed, cancelled
-    pickup_lat: Optional[float] = None
-    pickup_lng: Optional[float] = None
-    dropoff_lat: Optional[float] = None
-    dropoff_lng: Optional[float] = None
-    fare: float = 0.0
-    commission: float = 0.0
-    created_at: datetime
+    @classmethod
+    async def find_by_id(cls, service_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.services WHERE doc->>'service_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, service_id)
 
-class ProviderAvailability(BaseModel):
-    provider_id: str
-    location: Location
-    service_types: List[ServiceType]
-    is_available: bool = True
-    last_updated: datetime
+    @classmethod
+    async def list_by_user_id(cls, user_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.services WHERE doc->>'user_id' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, user_id, limit)
 
-class MatchResult(BaseModel):
-    service_id: str
-    provider_id: str
-    distance_km: float
-    estimated_time_min: int
-
-class RatingCreate(BaseModel):
-    service_id: str
-    rating: int  # 1-5 stars
-    comment: Optional[str] = None
+    @classmethod
+    async def list_by_status(cls, status: str, limit: int = 50) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.services WHERE doc->>'status' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, status, limit)
 
 
-class Message(BaseModel):
-    message_id: str
-    service_id: str
-    sender_id: str
-    sender_name: str
-    content: str
-    message_type: str = "text"  # text, image, location
-    created_at: datetime
+class RatingModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.ratings`."""
+    _table_name = "ratings"
+
+    @classmethod
+    async def list_by_target(cls, target_user_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.ratings WHERE doc->>'target_id' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, target_user_id, limit)
+
+
+class ProviderAvailabilityModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.provider_availability`."""
+    _table_name = "provider_availability"
+
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.provider_availability WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
+
+
+class ServiceMessageModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.messages`."""
+    _table_name = "messages"
+
+    @classmethod
+    async def list_by_service_id(cls, service_id: str, limit: int = 100) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.messages WHERE doc->>'service_id' = $1 ORDER BY created_at ASC LIMIT $2"
+        return await cls.sql_fetch_all(sql, service_id, limit)
+
+
+Service = ServiceModel

@@ -1,76 +1,71 @@
-from pydantic import BaseModel, ConfigDict
-from typing import List, Optional
-from datetime import datetime
+"""
+Modelos SQL de Market (Tiendas, Productos de Market y Órdenes) en PostgreSQL (Esquema `xuve`).
+"""
+
+from typing import Any, Dict, List, Optional
+from models.base import PostgresBaseModel
 
 
-class MarketProduct(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    product_id: str
-    store_id: str
-    name: str
-    description: str
-    price_usd: float
-    category: str  # comida, supermercado, farmacia
-    image_url: Optional[str] = None
-    available: bool = True
+class MarketStoreModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.market_stores`."""
+    _table_name = "market_stores"
+
+    @classmethod
+    async def find_by_id(cls, store_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.market_stores WHERE doc->>'store_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, store_id)
+
+    @classmethod
+    async def list_active(cls, limit: int = 100) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.market_stores WHERE (doc->>'is_active')::boolean = true LIMIT $1"
+        return await cls.sql_fetch_all(sql, limit)
 
 
-class MarketStore(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    store_id: str
-    name: str
-    category: str
-    address: str
-    lat: float
-    lng: float
-    image_url: Optional[str] = None
-    rating: float = 5.0
-    is_active: bool = True
+class MarketProductModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.market_products`."""
+    _table_name = "market_products"
+
+    @classmethod
+    async def find_by_id(cls, product_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.market_products WHERE doc->>'product_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, product_id)
+
+    @classmethod
+    async def list_by_store_id(cls, store_id: str, limit: int = 200) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.market_products WHERE doc->>'store_id' = $1 LIMIT $2"
+        return await cls.sql_fetch_all(sql, store_id, limit)
 
 
-class CartItem(BaseModel):
-    product_id: str
-    quantity: int
+class MarketOrderModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.market_orders`."""
+    _table_name = "market_orders"
+
+    @classmethod
+    async def find_by_id(cls, order_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.market_orders WHERE doc->>'order_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, order_id)
 
 
-class OrderCreate(BaseModel):
-    store_id: str
-    items: List[CartItem]
-    delivery_lat: float
-    delivery_lng: float
-    delivery_address: str
+class OrderModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.orders`."""
+    _table_name = "orders"
+
+    @classmethod
+    async def find_by_id(cls, order_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.orders WHERE doc->>'order_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, order_id)
+
+    @classmethod
+    async def list_by_user_id(cls, user_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.orders WHERE doc->>'user_id' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, user_id, limit)
+
+    @classmethod
+    async def list_by_store_id(cls, store_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.orders WHERE doc->>'store_id' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, store_id, limit)
 
 
-class Order(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    order_id: str
-    user_id: str
-    store_id: str
-    driver_id: Optional[str] = None
-    items: List[dict]
-    total_usd: float
-    delivery_fee: float = 2.0
-    commission: float = 0.0
-    status: str  # pending, preparing, in_transit, delivered, cancelled
-    delivery_lat: float
-    delivery_lng: float
-    delivery_address: str
-    created_at: datetime
-
-
-class ComercialRegister(BaseModel):
-    store_name: str
-    category: str  # restaurante, farmacia, supermercado, encomiendas
-    address: str
-    phone: str
-    description: Optional[str] = None
-    logo_url: Optional[str] = None
-
-
-class ProductCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
-    price: float
-    category: str = "comida"
-    image_url: Optional[str] = None
-    available: bool = True
+MarketStore = MarketStoreModel
+MarketProduct = MarketProductModel
+Order = OrderModel

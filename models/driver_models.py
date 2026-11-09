@@ -1,39 +1,29 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
-from datetime import datetime
+"""
+Modelos SQL de Conductores y Flota (PostgreSQL - Esquema `xuve`).
+"""
+
+from typing import Any, Dict, List, Optional
+from models.base import PostgresBaseModel
 
 
-class DriverRegister(BaseModel):
-    user_id: str
-    vehicle_type: str  # moto, taxi, bus, encava, cisterna, flete
-    is_owner: bool  # true = dueño, false = avance
-    cedula_url: Optional[str] = None
-    license_url: Optional[str] = None
-    medical_card_url: Optional[str] = None
-    owner_cedula: Optional[str] = None
-    owner_name: Optional[str] = None
-    owner_phone: Optional[str] = None
-    plate_number: str
-    vehicle_brand: str
-    vehicle_model: str
+class DriverModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.drivers`."""
+    _table_name = "drivers"
+
+    @classmethod
+    async def find_by_id(cls, driver_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.drivers WHERE doc->>'driver_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, driver_id)
+
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.drivers WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
+
+    @classmethod
+    async def list_by_status(cls, status: str, limit: int = 100) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.drivers WHERE doc->>'status' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, status, limit)
 
 
-class Driver(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    driver_id: str
-    user_id: str
-    vehicle_type: str
-    is_owner: bool
-    status: str  # pending, approved, blocked
-    is_online: bool = False
-    daily_toll_paid: bool = False
-    cedula_url: Optional[str] = None
-    license_url: Optional[str] = None
-    medical_card_url: Optional[str] = None
-    owner_cedula: Optional[str] = None
-    owner_name: Optional[str] = None
-    owner_phone: Optional[str] = None
-    plate_number: str
-    vehicle_brand: str
-    vehicle_model: str
-    created_at: datetime
+Driver = DriverModel

@@ -18,25 +18,11 @@ from datetime import datetime, timezone, timedelta
 from utils.database import db
 import uuid
 
-# Configuración del sistema de suscripción
-DAILY_SUBSCRIPTION_FEE = 1.00  # $1 USD por día
-FREE_TRIAL_DAYS = 3  # 3 días gratis para nuevos socios
-
-
-async def get_daily_fee() -> float:
-    """Obtener el fee diario de suscripción"""
-    config = await db.platform_config.find_one({"type": "subscription"}, {"_id": 0})
-    if config and "daily_fee" in config:
-        return config["daily_fee"]
-    return DAILY_SUBSCRIPTION_FEE
-
-
-async def get_free_trial_days() -> int:
-    """Obtener la cantidad de días de prueba gratis"""
-    config = await db.platform_config.find_one({"type": "subscription"}, {"_id": 0})
-    if config and "free_trial_days" in config:
-        return config["free_trial_days"]
-    return FREE_TRIAL_DAYS
+# Parámetros (fee diario y días de prueba) viven en xuve.platform_settings.
+from utils.financial_config import (
+    get_daily_subscription_fee as get_daily_fee,
+    get_free_trial_days,
+)
 
 
 async def get_user_first_activation(user_id: str) -> datetime | None:

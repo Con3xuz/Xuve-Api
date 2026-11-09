@@ -35,7 +35,7 @@ def create_token(user_id: str, role: str, token_version: int = 0) -> str:
 
 
 async def get_current_user(request: Request) -> dict:
-    from utils.database import db
+    from models.user_models import UserModel, UserSessionModel
 
     # Check cookie first, then Authorization header
     token = request.cookies.get("session_token")
@@ -48,7 +48,7 @@ async def get_current_user(request: Request) -> dict:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     # Check if it's a session token from Google Auth
-    session = await db.user_sessions.find_one({"session_token": token}, {"_id": 0})
+    session = await UserSessionModel.find_by_token(token)
     if session:
         expires_at = session.get("expires_at")
         if isinstance(expires_at, str):
@@ -58,7 +58,7 @@ async def get_current_user(request: Request) -> dict:
         if expires_at < datetime.now(timezone.utc):
             raise HTTPException(status_code=401, detail="Session expired")
 
-        user = await db.users.find_one({"user_id": session["user_id"]}, {"_id": 0})
+        user = await UserModel.find_by_id(session["user_id"])
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         _require_active(user)
@@ -67,7 +67,7 @@ async def get_current_user(request: Request) -> dict:
     # Try JWT token
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        user = await db.users.find_one({"user_id": payload["user_id"]}, {"_id": 0})
+        user = await UserModel.find_by_id(payload["user_id"])
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         # Revocación por versión: el token debe coincidir con el token_version actual.

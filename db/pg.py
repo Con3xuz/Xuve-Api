@@ -1,13 +1,9 @@
 """
 PostgreSQL connection pool (asyncpg).
 
-Reemplaza la conexión de MongoDB (motor). Expone un pool global de asyncpg
-configurado de forma agresiva para soportar picos de miles de usuarios
-concurrentes, y un codec JSONB <-> Python para que las filas `doc` se
-serialicen/deserialicen automáticamente como dict/list/escalares.
-
-NO usa ORM: el adaptador de compatibilidad (mongo_compat.py) arma el SQL JSONB
-a mano sobre este pool.
+Expone un pool global de asyncpg configurado para soportar alta
+concurrencia, y un codec JSONB <-> Python para serializar/deserializar
+automáticamente documentos como dict/list/escalares en las tablas de Xuve.
 """
 
 import os
@@ -69,17 +65,21 @@ async def init_pool() -> asyncpg.Pool:
     if not dsn:
         raise RuntimeError("DATABASE_URL environment variable must be set.")
 
+    # Supabase Session Pooler permite típicamente hasta 15 conexiones en capa gratuita.
+    # Usamos min_size=2 y max_size=10 para no agotar el pool de Supabase.
+    min_size = int(os.environ.get("DB_POOL_MIN_SIZE", "2"))
+    max_size = int(os.environ.get("DB_POOL_MAX_SIZE", "10"))
+
     _pool = await asyncpg.create_pool(
         dsn=_normalize_dsn(dsn),
-        # Pooling agresivo para tráfico masivo:
-        min_size=10,        # conexiones calientes desde el arranque
-        max_size=100,       # techo para picos de concurrencia
-        max_queries=50000,  # recicla la conexión tras N queries (libera memoria)
+        min_size=min_size,
+        max_size=max_size,
+        max_queries=50000,
         max_inactive_connection_lifetime=300.0,
         command_timeout=60,
         init=_init_connection,
     )
-    logger.info("PostgreSQL pool inicializado (min=10, max=100, max_queries=50000)")
+    logger.info(f"PostgreSQL pool inicializado (min={min_size}, max={max_size})")
     return _pool
 
 

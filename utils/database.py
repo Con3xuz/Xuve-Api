@@ -1,21 +1,15 @@
 """
-Capa de acceso a datos de Xuve.
-
-Migrado de MongoDB (motor) a PostgreSQL (asyncpg) mediante la capa de
-compatibilidad `db.mongo_compat`. La interfaz pública (`db`, `get_db`,
-`close_db`) se mantiene idéntica para no tocar los ~675 call sites.
+Capa de acceso a datos de Xuve sobre PostgreSQL (asyncpg).
+Gestiona el pool de conexiones y el esquema documental relacional.
 """
 
 import logging
 
-from db.mongo_compat import Database
+from models.base import Database, db
 from db.pg import init_pool as _init_pool, close_pool as _close_pool
 from db.schema import bootstrap_schema as _bootstrap_schema
 
 logger = logging.getLogger(__name__)
-
-# Objeto compatible con la API de MongoDB usado en todo el backend: db.<col>.<op>()
-db = Database()
 
 
 def get_db() -> Database:

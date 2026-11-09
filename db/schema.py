@@ -1,7 +1,7 @@
 """
 Esquema PostgreSQL para el almacén documental JSONB de Xuve.
 
-Cada "colección" de MongoDB se mapea a una tabla `xuve.<coleccion>` con la forma:
+Cada "colección" documental se mapea a una tabla `xuve.<coleccion>` con la forma:
     pk         BIGSERIAL PRIMARY KEY
     doc        JSONB NOT NULL      -- el documento completo
     created_at timestamptz DEFAULT now()
@@ -204,4 +204,15 @@ async def bootstrap_schema() -> None:
                     await conn.execute(stmt)
                 except Exception as exc:  # índice único sobre datos sucios, etc.
                     logger.warning("No se pudo crear índice (%s): %s", name, exc)
+        await _apply_migrations(conn)
     logger.info("Esquema Xuve verificado: %d colecciones", len(COLLECTIONS))
+
+
+async def _apply_migrations(conn) -> None:
+    """Ejecuta (idempotente) los archivos db/migrations/*.sql en orden alfabético."""
+    from pathlib import Path
+
+    folder = Path(__file__).parent / "migrations"
+    for sql_file in sorted(folder.glob("*.sql")):
+        await conn.execute(sql_file.read_text(encoding="utf-8"))
+        logger.info("Migración aplicada: %s", sql_file.name)

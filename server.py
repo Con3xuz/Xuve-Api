@@ -29,7 +29,7 @@ from utils.ratelimit import limiter
 from routes.auth_routes import router as auth_router
 from routes.wallet_routes import router as wallet_router, exchange_router
 from routes.socio_routes import router as socio_router
-from routes.service_routes import router as service_router, ratings_router
+from routes.service_routes import router as service_router, ratings_router, sos_router
 from routes.market_routes import router as market_router
 from routes.rent_routes import router as rent_router
 from routes.driver_routes import router as driver_router
@@ -93,6 +93,7 @@ app.include_router(exchange_router, prefix="/api")
 app.include_router(socio_router, prefix="/api")
 app.include_router(service_router, prefix="/api")
 app.include_router(ratings_router, prefix="/api")
+app.include_router(sos_router, prefix="/api")
 app.include_router(market_router, prefix="/api")
 app.include_router(rent_router, prefix="/api")
 app.include_router(driver_router, prefix="/api")

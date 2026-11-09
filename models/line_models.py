@@ -1,28 +1,21 @@
 """
-Modelos para el Sistema B2B de Líneas de Transporte
-
-Jerarquía:
-- LineaTransporte (Terminal): Entidad principal con billetera centralizada
-  - VehiculoLinea: Flota de vehículos registrados por la Línea
-  - ChoferLinea: Choferes afiliados a la Línea
-  - ViajeInterurbano: Viajes programados (Terminal Digital)
-  - RutaUrbana: Rutas fijas con micropagos (Torniquete QR)
+Modelos SQL de Líneas de Transporte Interurbano, Carga Pesada y Rutas (PostgreSQL - Esquema `xuve`).
 """
 
-from pydantic import BaseModel
-from typing import Optional, List
-from datetime import datetime
+from typing import Any, Dict, List, Optional
 from enum import Enum
+from models.base import PostgresBaseModel
 
 
 class LineServiceType(str, Enum):
-    INTERURBANO = "interurbano"  # Terminal Digital - Viajes programados
-    URBANO = "urbano"  # Rutas Fijas - Micropagos QR
+    INTERURBANO = "interurbano"
+    URBANO = "urbano"
 
 
 class LineStatus(str, Enum):
     PENDING_KYC = "pending_kyc"
     APPROVED = "approved"
+    ACTIVE = "active"
     SUSPENDED = "suspended"
 
 
@@ -30,386 +23,150 @@ class VehicleStatus(str, Enum):
     ACTIVE = "active"
     INACTIVE = "inactive"
     MAINTENANCE = "maintenance"
+    PENDING = "pending"
+    APPROVED = "approved"
+    SUSPENDED = "suspended"
 
 
 class ChoferStatus(str, Enum):
     ACTIVE = "active"
     INACTIVE = "inactive"
+    PENDING = "pending"
+    APPROVED = "approved"
+    ASSIGNED = "assigned"
     SUSPENDED = "suspended"
 
 
-# ==================== LÍNEA DE TRANSPORTE (TERMINAL) ====================
+class LineaTransporteModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.lineas_transporte`."""
+    _table_name = "lineas_transporte"
 
+    @classmethod
+    async def find_by_id(cls, linea_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.lineas_transporte WHERE doc->>'linea_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, linea_id)
 
-class LineaTransporteCreate(BaseModel):
-    """Registro de una nueva Línea de Transporte"""
+    @classmethod
+    async def find_by_admin_user_id(cls, admin_user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.lineas_transporte WHERE doc->>'admin_user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, admin_user_id)
 
-    nombre_linea: str  # Ej: "Expresos Occidente"
-    rif: str  # RIF de la empresa
-    direccion_oficina: str
-    telefono_contacto: str
-    email_contacto: str
-    tipo_servicio: LineServiceType  # interurbano o urbano
-    descripcion: Optional[str] = None
-    logo_url: Optional[str] = None
 
+class VehiculoLineaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.vehiculos_linea`."""
+    _table_name = "vehiculos_linea"
 
-class LineaTransporte(BaseModel):
-    """Entidad principal: Línea de Transporte / Terminal"""
+    @classmethod
+    async def find_by_id(cls, vehiculo_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.vehiculos_linea WHERE doc->>'vehiculo_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, vehiculo_id)
 
-    linea_id: str
-    admin_user_id: str  # Usuario line_admin que administra
-    nombre_linea: str
-    rif: str
-    direccion_oficina: str
-    telefono_contacto: str
-    email_contacto: str
-    tipo_servicio: LineServiceType
-    descripcion: Optional[str] = None
-    logo_url: Optional[str] = None
+    @classmethod
+    async def list_by_linea_id(cls, linea_id: str, limit: int = 100) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.vehiculos_linea WHERE doc->>'linea_id' = $1 LIMIT $2"
+        return await cls.sql_fetch_all(sql, linea_id, limit)
 
-    # Billetera centralizada de la Línea
-    wallet_balance: float = 0.0
-    wallet_held: float = 0.0
 
-    # Estado y KYC
-    status: LineStatus = LineStatus.PENDING_KYC
-    activation_fee_paid: bool = False
+class ChoferLineaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.choferes_linea`."""
+    _table_name = "choferes_linea"
 
-    # Estadísticas
-    total_viajes: int = 0
-    total_pasajeros: int = 0
-    total_earnings: float = 0.0
-    avg_rating: float = 5.0
+    @classmethod
+    async def find_by_id(cls, chofer_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.choferes_linea WHERE doc->>'chofer_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, chofer_id)
 
-    # Timestamps
-    approved_at: Optional[str] = None
-    created_at: str
 
+class ViajeInterurbanoModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.viajes_interurbano`."""
+    _table_name = "viajes_interurbano"
 
-# ==================== VEHÍCULOS DE LA LÍNEA ====================
+    @classmethod
+    async def find_by_id(cls, viaje_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.viajes_interurbano WHERE doc->>'viaje_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, viaje_id)
 
 
-class VehiculoLineaCreate(BaseModel):
-    """Registrar un vehículo en la flota de la Línea"""
+class ReservaInterurbanoModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.reservas_interurbano`."""
+    _table_name = "reservas_interurbano"
 
-    placa: str
-    marca: str
-    modelo: str
-    year: int
-    capacidad_pasajeros: int  # Número de asientos
-    tipo_vehiculo: str  # buseta, van, expreso, etc.
-    foto_url: Optional[str] = None
-    circulation_card_url: Optional[str] = None
-    rcv_insurance_url: Optional[str] = None
 
+class ViajeModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.viajes`."""
+    _table_name = "viajes"
 
-class VehiculoLinea(BaseModel):
-    """Vehículo registrado en la flota de una Línea"""
 
-    vehiculo_id: str
-    linea_id: str  # FK a LineaTransporte
-    placa: str
-    marca: str
-    modelo: str
-    year: int
-    capacidad_pasajeros: int
-    tipo_vehiculo: str
-    foto_url: Optional[str] = None
+class RutaUrbanaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.rutas_urbanas`."""
+    _table_name = "rutas_urbanas"
 
-    # Documentos
-    circulation_card_url: Optional[str] = None
-    rcv_insurance_url: Optional[str] = None
 
-    # Estado
-    status: VehicleStatus = VehicleStatus.ACTIVE
+class RutaUrbanaV2Model(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.rutas_urbanas_v2`."""
+    _table_name = "rutas_urbanas_v2"
 
-    # Para Rutas Urbanas: código QR único del vehículo
-    qr_code: Optional[str] = None
-    ruta_asignada_id: Optional[str] = None
 
-    created_at: str
+class RecorridoActivoModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.recorridos_activos`."""
+    _table_name = "recorridos_activos"
 
 
-# ==================== CHOFERES DE LA LÍNEA ====================
+class RecorridoHistoricoModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.recorridos_historico`."""
+    _table_name = "recorridos_historico"
 
 
-class ChoferLineaCreate(BaseModel):
-    """Registrar un chofer afiliado a la Línea - Mismos requisitos que conductor de taxi"""
+class AsignacionRutaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.asignaciones_ruta`."""
+    _table_name = "asignaciones_ruta"
 
-    # Datos personales
-    nombre: str
-    cedula: str
-    telefono: str
-    email: Optional[str] = None
 
-    # Documentos obligatorios (igual que conductor de taxi)
-    cedula_url: str  # Foto de la cédula
-    licencia_url: str  # Foto de la licencia
-    licencia_categoria: str = "5ta"  # DEBE ser 5ta grado para choferes de línea
-    medical_card_url: str  # Certificado médico
-    medical_card_expiry: Optional[str] = None  # Fecha vencimiento
-    foto_url: Optional[str] = None  # Foto del chofer
+class MicropagoUrbanoModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.micropagos_urbanos`."""
+    _table_name = "micropagos_urbanos"
 
-    # Antecedentes (opcional pero recomendado)
-    antecedentes_url: Optional[str] = None
 
+class MicropagoQRModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.micropagos_qr`."""
+    _table_name = "micropagos_qr"
 
-class ChoferLinea(BaseModel):
-    """Chofer afiliado a una Línea de Transporte"""
 
-    chofer_id: str
-    linea_id: str  # FK a LineaTransporte
-    user_id: Optional[str] = None  # Si tiene cuenta en Xuve (rol chofer_linea)
+class RutaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.rutas`."""
+    _table_name = "rutas"
 
-    nombre: str
-    cedula: str
-    telefono: str
-    email: Optional[str] = None
 
-    # Documentos
-    licencia_url: str
-    licencia_categoria: str
-    foto_url: Optional[str] = None
-    medical_card_url: Optional[str] = None
+class CotizacionCargaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.cotizaciones_carga`."""
+    _table_name = "cotizaciones_carga"
 
-    # Estado
-    status: ChoferStatus = ChoferStatus.ACTIVE
 
-    # Estadísticas del chofer
-    total_viajes: int = 0
-    avg_rating: float = 5.0
+class VehiculoCargaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.vehiculos_carga`."""
+    _table_name = "vehiculos_carga"
 
-    created_at: str
 
+class ServicioCargaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.servicios_carga`."""
+    _table_name = "servicios_carga"
 
-# ==================== VIAJES INTERURBANOS (TERMINAL DIGITAL) ====================
 
+class OperadorCargaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.operadores_carga`."""
+    _table_name = "operadores_carga"
 
-class ViajeInterurbanoCreate(BaseModel):
-    """Crear un viaje programado en el Terminal Digital"""
 
-    origen: str
-    destino: str
-    fecha_salida: str  # ISO format: 2026-03-15T08:00:00
-    precio_asiento: float
-    capacidad_puestos: int  # Cantidad de puestos para este viaje (manual)
-    vehiculo_id: str  # Vehículo asignado
-    chofer_id: Optional[str] = None  # Chofer asignado (puede asignarse después)
-    descripcion: Optional[str] = None
-    punto_encuentro: Optional[str] = None
+class NotificacionCargaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.notificaciones_carga`."""
+    _table_name = "notificaciones_carga"
 
 
-class ViajeInterurbano(BaseModel):
-    """Viaje programado por una Línea de Transporte"""
-
-    viaje_id: str
-    linea_id: str  # FK a LineaTransporte
-    linea_nombre: str
-
-    # Ruta
-    origen: str
-    destino: str
-    fecha_salida: str
-
-    # Pricing
-    precio_asiento: float
-
-    # Vehículo y Chofer asignados
-    vehiculo_id: str
-    vehiculo_info: Optional[dict] = None  # Marca, modelo, placa
-    chofer_id: Optional[str] = None
-    chofer_info: Optional[dict] = None  # Nombre, teléfono
-
-    # Capacidad (se obtiene del vehículo)
-    capacidad_total: int
-    puestos_disponibles: int
-    puestos_vendidos: int = 0
-
-    # Financiero
-    ingreso_potencial: float
-    comision_esperada: float  # 10% del ingreso potencial
-    ingresos_reales: Optional[float] = None
-    comision_cobrada: Optional[float] = None
-
-    # Detalles
-    descripcion: Optional[str] = None
-    punto_encuentro: Optional[str] = None
-
-    # Estado: programado, en_curso, completado, cancelado
-    status: str = "programado"
-
-    # Reservas embebidas
-    reservas: List[dict] = []
-
-    # Timestamps
-    iniciado_at: Optional[str] = None
-    completado_at: Optional[str] = None
-    created_at: str
-
-
-# ==================== RUTAS URBANAS (MICROPAGOS QR) ====================
-
-
-class RutaUrbanaCreate(BaseModel):
-    """Crear una ruta urbana fija"""
-
-    nombre_ruta: str  # Ej: "Ruta Centro", "Ruta Universidad"
-    codigo_ruta: str  # Código corto: "R01", "R02"
-    precio_pasaje: float  # Precio fijo del pasaje
-    recorrido: Optional[str] = None  # Descripción del recorrido
-    horario_inicio: str  # "05:00"
-    horario_fin: str  # "22:00"
-
-
-class RutaUrbana(BaseModel):
-    """Ruta urbana fija con micropagos QR"""
-
-    ruta_id: str
-    linea_id: str  # FK a LineaTransporte
-    nombre_ruta: str
-    codigo_ruta: str
-    precio_pasaje: float
-    recorrido: Optional[str] = None
-    horario_inicio: str
-    horario_fin: str
-
-    # Vehículos asignados a esta ruta
-    vehiculos_asignados: List[str] = []  # Lista de vehiculo_ids
-
-    # QR maestro de la ruta (opcional)
-    qr_code_ruta: Optional[str] = None
-
-    # Estadísticas
-    total_pasajes_hoy: int = 0
-    total_ingresos_hoy: float = 0.0
-
-    status: str = "active"
-    created_at: str
-
-
-# ==================== RESERVAS / BOLETOS ====================
-
-
-class ReservaInterurbano(BaseModel):
-    """Reserva de boleto para viaje interurbano"""
-
-    reserva_id: str
-    viaje_id: str
-    user_id: str  # Cliente que reservó
-
-    # Datos del pasajero
-    nombre_pasajero: str
-    telefono_pasajero: Optional[str] = None
-    cedula_pasajero: Optional[str] = None
-
-    # Detalles de la reserva
-    cantidad_puestos: int
-    precio_unitario: float
-    total: float
-
-    # Info de la Línea y Chofer (para el boleto)
-    linea_nombre: str
-    chofer_nombre: Optional[str] = None
-    chofer_telefono: Optional[str] = None
-    vehiculo_placa: Optional[str] = None
-
-    # Info del viaje
-    origen: str
-    destino: str
-    fecha_salida: str
-    punto_encuentro: Optional[str] = None
-
-    # Estado: confirmada, cancelada, abordada, no_show
-    status: str = "confirmada"
-
-    # Timestamps
-    cancelada_at: Optional[str] = None
-    created_at: str
-
-
-# ==================== MICROPAGO QR ====================
-
-
-class MicropagoQR(BaseModel):
-    """Registro de un micropago por QR en ruta urbana"""
-
-    pago_id: str
-    ruta_id: str
-    vehiculo_id: str
-    chofer_id: Optional[str] = None
-    user_id: str  # Cliente que pagó
-
-    monto: float
-    fee_xuve: float  # Fee fijo de Xuve
-    monto_linea: float  # Monto que recibe la línea
-    metodo_pago: str  # "wallet", "qr_externo"
-
-    created_at: str
-
-
-# ==================== RUTAS URBANAS EXTENDIDAS ====================
-
-
-class RutaUrbanaCreateExtended(BaseModel):
-    """Crear una ruta urbana con asignaciones"""
-
-    nombre_ruta: str  # Ej: "Ruta 2: Centro - Universidad"
-    codigo_ruta: str  # Código corto: "R02"
-    tarifa: float  # Tarifa fija del pasaje (Ej: $0.50)
-    descripcion: Optional[str] = None  # Descripción del recorrido
-    horario_inicio: str = "05:00"  # Hora inicio operaciones
-    horario_fin: str = "22:00"  # Hora fin operaciones
-    color: Optional[str] = "#8B5CF6"  # Color para identificar en mapa
-
-
-class AsignacionRuta(BaseModel):
-    """Asignar un chofer y vehículo a una ruta"""
-
-    ruta_id: str
-    chofer_id: str
-    vehiculo_id: str
-
-
-# ==================== GEOLOCALIZACIÓN EN TIEMPO REAL ====================
-
-
-class GeoUpdate(BaseModel):
-    """Actualización de ubicación del chofer"""
-
-    lat: float
-    lng: float
-    heading: Optional[float] = None  # Dirección en grados
-    speed: Optional[float] = None  # Velocidad km/h
-
-
-class RecorridoActivo(BaseModel):
-    """Recorrido activo de un chofer en ruta urbana"""
-
-    recorrido_id: str
-    ruta_id: str
-    chofer_id: str
-    vehiculo_id: str
-    linea_id: str
-
-    # Info para mostrar
-    ruta_nombre: str
-    vehiculo_placa: str
-    chofer_nombre: str
-    tarifa: float
-
-    # Geolocalización actual
-    lat: float
-    lng: float
-    heading: Optional[float] = None
-    speed: Optional[float] = None
-
-    # QR data (para generar código)
-    qr_data: str  # JSON string con info del pago
-
-    # Estado
-    pasajeros_hoy: int = 0
-    ingresos_hoy: float = 0.0
-
-    iniciado_at: str
-    ultima_actualizacion: str
+LineaTransporte = LineaTransporteModel
+VehiculoLinea = VehiculoLineaModel
+ChoferLinea = ChoferLineaModel
+ViajeInterurbano = ViajeInterurbanoModel
+RutaUrbana = RutaUrbanaModel
+ReservaInterurbano = ReservaInterurbanoModel
+MicropagoQR = MicropagoQRModel
+RecorridoActivo = RecorridoActivoModel

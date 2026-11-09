@@ -1,18 +1,14 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
-from typing import Optional
-from datetime import datetime
+"""
+Modelos SQL de Usuarios, Sesiones, Autenticación y Socios (PostgreSQL - Esquema `xuve`).
+Contiene las consultas SQL directas para la capa de persistencia de usuarios.
+"""
 
-# ROLES DEL SISTEMA:
-# user - Usuario/Cliente Final (también actúa como paciente)
-# socio_conductor - Socio Conductor (Movilidad Urbana: carros, taxis, mototaxis)
-# socio_repartidor - Socio Repartidor (Micromovilidad: bicicletas, monopatines, motos delivery)
-# socio_comercial - Socio Comercial (Tiendas: restaurantes, farmacias, supermercados)
-# rent_owner - Propietario Rent a Car
-# carga_pesada - Operador Carga Pesada (Fletes, mudanzas, cisternas)
-# line_admin - Administrador de Terminal/Línea Interurbana (B2B viajes programados)
-# chofer_linea - Chofer afiliado a una Línea de Transporte Interurbana
-# medico - Médico (recetas digitales enviadas a Farmabien)
-# admin - Administrador
+from typing import Any, Dict, List, Optional
+from models.base import PostgresBaseModel, get_pool
+
+# ===========================================================================
+# CONSTANTES DE DOMINIO (ROLES Y CATEGORÍAS DE VEHÍCULOS)
+# ===========================================================================
 
 VALID_ROLES = [
     "user",
@@ -30,134 +26,206 @@ VALID_ROLES = [
     "admin",
 ]
 
-# Roles que SÍ se pueden obtener vía KYC. Nunca incluye "admin" (no se concede
-# por KYC) ni "user" (rol base). Se usa como whitelist al solicitar y al aprobar.
 KYC_ELEVATABLE_ROLES = {r for r in VALID_ROLES if r not in ("admin", "user")}
 
 CONDUCTOR_VEHICLE_TYPES = ["carro_particular", "taxi_linea", "mototaxi"]
 REPARTIDOR_VEHICLE_TYPES = ["bicicleta", "monopatín_electrico", "moto_delivery"]
 CARGA_VEHICLE_TYPES = ["camion_350", "camion_750", "camion_cava", "cisterna"]
-# Tipos de vehículos para Líneas de Transporte B2B
 LINE_VEHICLE_TYPES = ["buseta", "van", "expreso", "minibus", "autobus"]
-# Tipos de servicio de línea
-LINE_SERVICE_TYPES = [
-    "interurbano",
-    "urbano",
-]  # interurbano = terminales, urbano = rutas fijas QR
+LINE_SERVICE_TYPES = ["interurbano", "urbano"]
 
-
-# Roles que un usuario puede SOLICITAR al registrarse. El registro nunca asigna
-# directamente un rol de socio/admin: el rol efectivo siempre nace como "user" y
-# solo se eleva tras aprobación de KYC. Cualquier rol distinto de "user" que se
-# envíe en el registro se guarda como `pending_role` (intención), nunca como rol.
 SELF_REGISTRABLE_ROLE = "user"
 PRIVILEGED_ROLES = {"admin"}
 
 
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str = Field(min_length=8)
-    name: str
-    phone: str
-    role: str = "user"
+# ===========================================================================
+# MODELOS SQL DE BASE DE DATOS (TABLAS EN ESQUEMA `xuve`)
+# ===========================================================================
 
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
+class UserModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.users`."""
+
+    _table_name = "users"
+
+    @classmethod
+    async def find_by_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.users WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
+
+    @classmethod
+    async def find_by_email(cls, email: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.users WHERE doc->>'email' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, email)
+
+    @classmethod
+    async def create_user(cls, user_doc: Dict[str, Any]) -> int:
+        sql = "INSERT INTO xuve.users (doc) VALUES ($1) RETURNING pk"
+        pool = get_pool()
+        async with pool.acquire() as conn:
+            return await conn.fetchval(sql, user_doc)
+
+    @classmethod
+    async def update_by_id(cls, user_id: str, fields: Dict[str, Any]):
+        return await cls.update_one({"user_id": user_id}, {"$set": fields})
+
+    @classmethod
+    async def delete_by_id(cls, user_id: str) -> str:
+        sql = "DELETE FROM xuve.users WHERE doc->>'user_id' = $1"
+        return await cls.sql_execute(sql, user_id)
+
+    @classmethod
+    async def list_by_role(cls, role: str, limit: int = 100) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.users WHERE doc->>'role' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, role, limit)
 
 
-class VerifyEmail(BaseModel):
-    email: EmailStr
-    code: str
+class UserSessionModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.user_sessions`."""
+
+    _table_name = "user_sessions"
+
+    @classmethod
+    async def find_by_token(cls, session_token: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.user_sessions WHERE doc->>'session_token' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, session_token)
+
+    @classmethod
+    async def delete_by_token(cls, session_token: str) -> str:
+        sql = "DELETE FROM xuve.user_sessions WHERE doc->>'session_token' = $1"
+        return await cls.sql_execute(sql, session_token)
 
 
-class ResendVerification(BaseModel):
-    email: EmailStr
+class EmailVerificationModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.email_verifications`."""
+
+    _table_name = "email_verifications"
+
+    @classmethod
+    async def find_by_email(cls, email: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.email_verifications WHERE doc->>'email' = $1 ORDER BY created_at DESC LIMIT 1"
+        return await cls.sql_fetch_one(sql, email)
+
+    @classmethod
+    async def delete_by_email(cls, email: str) -> str:
+        sql = "DELETE FROM xuve.email_verifications WHERE doc->>'email' = $1"
+        return await cls.sql_execute(sql, email)
 
 
-class ForgotPassword(BaseModel):
-    email: EmailStr
+class PasswordResetModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.password_resets`."""
+
+    _table_name = "password_resets"
+
+    @classmethod
+    async def find_by_token(cls, token: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.password_resets WHERE doc->>'token' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, token)
+
+    @classmethod
+    async def delete_by_email(cls, email: str) -> str:
+        sql = "DELETE FROM xuve.password_resets WHERE doc->>'email' = $1"
+        return await cls.sql_execute(sql, email)
 
 
-class ResetPassword(BaseModel):
-    token: str
-    password: str = Field(min_length=8)
+class SocioConductorModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.socios_conductores`."""
+
+    _table_name = "socios_conductores"
+
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.socios_conductores WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
 
 
-class User(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    user_id: str
-    email: str
-    name: str
-    phone: Optional[str] = None
-    picture: Optional[str] = None
-    role: str = "user"
-    sub_role: Optional[str] = None
-    wallet_balance: float = 0.0
-    wallet_held: float = 0.0
-    status: str = "active"
-    kyc_status: str = "pending"
-    avg_rating: float = 5.0
-    total_trips: int = 0
-    created_at: datetime
+class SocioRepartidorModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.socios_repartidores`."""
+
+    _table_name = "socios_repartidores"
+
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.socios_repartidores WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
 
 
-class KYCConductor(BaseModel):
-    """KYC para Socio Conductor - Requiere todos los documentos"""
+class SocioComercialModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.socios_comerciales`."""
 
-    cedula_url: str
-    cedula_number: str
-    license_url: str
-    license_category: str
-    medical_card_url: str
-    medical_card_expiry: str
-    circulation_card_url: str
-    rcv_insurance_url: str
-    rcv_expiry: str
-    vehicle_photo_url: str
+    _table_name = "socios_comerciales"
+
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.socios_comerciales WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
 
 
-class KYCRepartidor(BaseModel):
-    """KYC para Socio Repartidor - Documentos según vehículo"""
+class SocioCargaPesadaModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.socios_carga_pesada`."""
 
-    cedula_url: str
-    cedula_number: str
-    frontal_photo_url: str
-    license_url: Optional[str] = None
-    circulation_card_url: Optional[str] = None
+    _table_name = "socios_carga_pesada"
 
-
-class SocioConductorRegister(BaseModel):
-    """Registro de Socio Conductor (Movilidad Urbana)"""
-
-    vehicle_type: str
-    cedula_url: str
-    cedula_number: str
-    license_url: str
-    license_category: str
-    medical_card_url: str
-    circulation_card_url: str
-    rcv_insurance_url: str
-    plate_number: str
-    vehicle_brand: str
-    vehicle_model: str
-    vehicle_year: int
-    vehicle_color: str
-    vehicle_photo_url: str
-    taxi_line_name: Optional[str] = None
-    taxi_line_permit: Optional[str] = None
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.socios_carga_pesada WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
 
 
-class SocioRepartidorRegister(BaseModel):
-    """Registro de Socio Repartidor (Micromovilidad/Delivery)"""
+class SocioInterurbanoModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.socios_interurbano`."""
 
-    vehicle_type: str
-    cedula_url: str
-    cedula_number: str
-    frontal_photo_url: str
-    license_url: Optional[str] = None
-    circulation_card_url: Optional[str] = None
-    plate_number: Optional[str] = None
-    vehicle_brand: Optional[str] = None
-    vehicle_model: Optional[str] = None
+    _table_name = "socios_interurbano"
+
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.socios_interurbano WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
+
+
+class PlatformConfigModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.platform_config`."""
+
+    _table_name = "platform_config"
+
+    @classmethod
+    async def get_config(cls, config_id: str = "financial_config") -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.platform_config WHERE doc->>'config_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, config_id)
+
+
+class DailySubscriptionModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.daily_subscriptions`."""
+
+    _table_name = "daily_subscriptions"
+
+    @classmethod
+    async def find_by_user_id(cls, user_id: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.daily_subscriptions WHERE doc->>'user_id' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, user_id)
+
+
+class SubscriptionHistoryModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.subscription_history`."""
+
+    _table_name = "subscription_history"
+
+    @classmethod
+    async def list_by_user_id(cls, user_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.subscription_history WHERE doc->>'user_id' = $1 ORDER BY created_at DESC LIMIT $2"
+        return await cls.sql_fetch_all(sql, user_id, limit)
+
+
+class SubscriptionPaymentModel(PostgresBaseModel):
+    """Modelo SQL para la tabla `xuve.subscription_payments`."""
+
+    _table_name = "subscription_payments"
+
+    @classmethod
+    async def find_by_reference(cls, reference: str) -> Optional[Dict[str, Any]]:
+        sql = "SELECT doc FROM xuve.subscription_payments WHERE doc->>'reference' = $1 LIMIT 1"
+        return await cls.sql_fetch_one(sql, reference)
+
+
+# Alias de compatibilidad
+User = UserModel
